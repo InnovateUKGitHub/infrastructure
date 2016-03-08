@@ -1,0 +1,6 @@
+require 'vagrant-dotvm'
+
+Vagrant.configure(2) do |config|
+  dotvm = VagrantPlugins::Dotvm::Dotvm.new __dir__
+  dotvm.inject(config)
+end
