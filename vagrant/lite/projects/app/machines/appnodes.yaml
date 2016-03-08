@@ -45,9 +45,9 @@
       ip: 10.100.1.204
       mask: 255.255.0.0
       interface: "%project.interface%"
-  routes:
-    - destination: 10.100.1.205
-      gateway: 10.0.2.2
+#  routes:
+#    - destination: 10.100.1.205
+#      gateway: 10.0.2.2
   provision:
     - type: shell
       path: "%host.files_dir%/keys.sh"
@@ -70,9 +70,9 @@
       ip: 10.100.1.205
       mask: 255.255.0.0
       interface: "%project.interface%"
-  routes:
-    - destination: 10.100.1.204
-      gateway: 10.0.2.2
+#  routes:
+#    - destination: 10.100.1.204
+#      gateway: 10.0.2.2
   provision:
     - type: shell
       path: "%host.files_dir%/keys.sh"
