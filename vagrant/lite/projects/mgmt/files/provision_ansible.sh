@@ -48,3 +48,20 @@ then
   cp /vagrant/id_rsa ~vagrant/.ssh/
   chmod 600 ~vagrant/.ssh/id_rsa
 fi
+
+# Checkout the BISDigital/infrastructure Github repo to /opt/ and link the 
+# directory to /etc.
+
+mkdir -p /opt/BISDigital/infrastructure && chown vagrant:vagrant \
+  /opt/BISDigital/infrastructure
+su -l vagrant << __EOF__
+cd /opt/BISDigital/infrastructure
+git init
+git remote add -f origin https://github.com/BISDigital/infrastructure.git
+git config core.sparsecheckout true
+echo "ansible/" >> .git/info/sparse-checkout
+git pull origin master
+__EOF__
+
+mv /etc/ansible /root/ansible.orig
+ln -s /opt/BISDigital/infrastructure/ansible /etc/ansible
