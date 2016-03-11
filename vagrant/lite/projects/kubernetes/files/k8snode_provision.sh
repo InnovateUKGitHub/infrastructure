@@ -1,4 +1,4 @@
----
+#!/usr/bin/env bash
 # Copyright (c) 2016, Department for Business, Innovation and Skills
 # All rights reserved.
 #
@@ -24,69 +24,47 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# This is a Kubernetes cluster
+# Provision a Kubernetes node on CentOS Atomic
+# https://access.redhat.com/documentation/
+#+en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-guide/
 
-- nick: k8smaster
-  name: k8smaster
-  primary: true
-  box: "%project.box%"
-  groups:
-    - kubernetes
-    - k8s
-  cpus: 2
-  memory: 1024
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.11
-      mask: 255.255.255.0
-      interface: "%project.interface%"
-  hosts: "%project.hosts%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/k8smaster_provision.sh"
-    - type: reload
-    - type: shell
-      path: "%host.files_dir%/k8smaster_provision2.sh"
+set -o nounset
+set -o errexit
+set -o pipefail
 
-- nick: k8snode1
-  name: k8snode1
-  box: "%project.box%"
-  groups:
-    - kubernetes
-    - k8s
-    - k8snodes
-  cpus: 2
-  memory: 1024
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.21
-      mask: 255.255.255.0
-      interface: "%project.interface%"
-  hosts: "%project.hosts%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/k8snode_provision.sh"
+MNAME="k8smaster"
+HNAME="`hostname`"
 
+exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
-- nick: k8snode2
-  name: k8snode2
-  box: "%project.box%"
-  groups:
-    - kubernetes
-    - k8s
-    - k8snodes
-  cpus: 2
-  memory: 1024
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.22
-      mask: 255.255.255.0
-      interface: "%project.interface%"
-  hosts: "%project.hosts%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/k8snode_provision.sh"
-      
+# Set the Kubernetes config
+sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
+  /etc/kubernetes/config
+
+# Set the Kubelet config
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
+  /etc/kubernetes/kubelet
+sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"$HNAME\"|" \
+  /etc/kubernetes/kubelet
+sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://$MNAME:8080\"|" \
+  /etc/kubernetes/kubelet
+sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true"|' \
+  /etc/kubernetes/kubelet
+
+# Start the relevant services
+for SERVICE in docker kube-proxy.service kubelet.service
+do
+  systemctl restart $SERVICE
+  systemctl enable $SERVICE
+done
+
+# Set the Flannel config
+sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://$MNAME:2379\"|" \
+  /etc/sysconfig/flanneld
+sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
+  /etc/sysconfig/flanneld
+
+# Start Flannel
+systemctl start flanneld
+systemctl enable flanneld
+
