@@ -52,6 +52,8 @@
   provision:
     - type: shell
       path: "%host.files_dir%/keys.sh"
+    - type: shell
+      path: "%host.files_dir%/provision_solr.sh"
   authorized_keys: "%global.authorized_keys%"
 
 - nick: searchproto-2
