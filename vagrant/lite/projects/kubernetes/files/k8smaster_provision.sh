@@ -33,6 +33,7 @@ set -o errexit
 set -o pipefail
 
 HNAME="k8smaster"
+MADDR="10.100.1.11"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
@@ -44,9 +45,13 @@ sed -ie 's|ETCD_LISTEN_CLIENT_URLS=".*"|ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:
 sed -ie 's|#ETCD_LISTEN_PEER_URLS=".*"|ETCD_LISTEN_PEER_URLS="http://localhost:2380"|' \
   /etc/etcd/etcd.conf
 
-# Edit the Kubernete config file
+# Edit the Kubernetes config file
 sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${HNAME}:8080\"|" \
   /etc/kubernetes/config
+
+# Edit the Kubernetes API server config
+sed -ie "s|KUBE_API_ADDRESS=\".*\"|KUBE_API_ADDRESS=\"--insecure-bind-address=${MADDR}\"|" \
+  /etc/kubernetes/apiserver
 
 # Start master systemd services
 for SERVICES in docker etcd
