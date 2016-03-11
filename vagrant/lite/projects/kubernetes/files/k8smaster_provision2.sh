@@ -34,19 +34,20 @@ set -o pipefail
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
+MNAME="k8smaster"
 MASTER_IP="10.100.1.11"
 
 sleep 5
 
 # Edit the /etc/kubernetes/kublet config
-sed -ie "s|KUBELET_ADDRESS=\".*\"|KUBELET_ADDRESS=\"--address=${MASTER_IP}\"|" \
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_HOSTNAME=".*"|KUBELET_HOSTNAME="--hostname-override=master.example.com"|' \
+sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
 sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true"|' \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_API_SERVER=".*"|KUBELET_API_SERVER="--api_servers=http://master.example.com:8080"|' \
-   /etc/kubernetes/kubelet
+sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
+  /etc/kubernetes/kubelet
 sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--config=/etc/kubernetes/manifests"|' \
   /etc/kubernetes/kubelet
 
