@@ -44,7 +44,7 @@ sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
 # Set the Kubelet config
 sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"$HNAME\"|" \
+sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=$HNAME\"|" \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://$MNAME:8080\"|" \
   /etc/kubernetes/kubelet

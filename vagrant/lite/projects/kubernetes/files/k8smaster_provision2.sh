@@ -34,7 +34,7 @@ set -o pipefail
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
-MASTER_IP="10.200.1.11"
+MASTER_IP="10.100.1.11"
 
 sleep 5
 
