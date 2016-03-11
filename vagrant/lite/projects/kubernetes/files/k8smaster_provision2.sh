@@ -39,7 +39,7 @@ MASTER_IP="10.200.1.11"
 sleep 5
 
 # Edit the /etc/kubernetes/kublet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=${MASTER_IP}"|' \
+sed -ie "s|KUBELET_ADDRESS=\".*\"|KUBELET_ADDRESS=\"--address=${MASTER_IP}\"|" \
   /etc/kubernetes/kubelet
 sed -ie 's|KUBELET_HOSTNAME=".*"|KUBELET_HOSTNAME="--hostname-override=master.example.com"|' \
   /etc/kubernetes/kubelet
