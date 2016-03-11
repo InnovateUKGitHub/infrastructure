@@ -68,6 +68,7 @@
   provision:
     - type: shell
       path: "%host.files_dir%/k8snode_provision.sh"
+    - type: reload
 
 
 - nick: k8snode2
@@ -89,4 +90,5 @@
   provision:
     - type: shell
       path: "%host.files_dir%/k8snode_provision.sh"
+    - type: reload
       
