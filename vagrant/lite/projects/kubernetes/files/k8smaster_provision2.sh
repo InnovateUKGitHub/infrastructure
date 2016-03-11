@@ -44,11 +44,9 @@ sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true"|' \
-  /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--config=/etc/kubernetes/manifests"|' \
+sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"|' \
   /etc/kubernetes/kubelet
 
 # Create the manifests directory
@@ -74,9 +72,7 @@ cat - > /etc/kubernetes/manifests/apiserver.pod.json << __EOF__
           "--address=${MASTER_IP}",
           "--etcd_servers=http://${MASTER_IP}:2379",
           "--service-cluster-ip-range=10.254.0.0/16",
-          "--
-admission_control=NamespaceLifecycle,NamespaceExists,LimitRa
-nger,SecurityContextDeny,ResourceQuota"
+          "--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
         ],
         "ports": [
           {
