@@ -19,9 +19,11 @@ recovery, centralized configuration and more. Solr powers the search and
 navigation features of many of the world's largest internet sites.
 
 %build
-rm -fr %{buildroot}
-mkdir -p %{buildroot}
-tar zxvf %{_sourcedir}/%{name}-%{version}.tgz -C %{buildroot}
+
+%prep
+%__rm -fr %{buildroot}
+%__mkdir %{buildroot}
+tar zxvf %{SOURCE0} -C %{buildroot}
 
 %pre
 if [ "$1" = 1 ]
@@ -38,9 +40,9 @@ then
 fi
 
 %install
-mkdir -p %{buildroot}/opt/
-cp -r %{name}-%{version} %{buildroot}/opt/
-ln -s %{name}-%{version} %{buildroot}/opt/%{name}
+mkdir %{buildroot}/opt/
+%__cp -r %{name}-%{version} %{buildroot}/opt/
+%__ln_s %{name}-%{version} %{buildroot}/opt/%{name}
 
 find %{buildroot}/opt/%{name}-%{version} -type d -print0 | xargs -0 chmod 0755
 find %{buildroot}/opt/%{name}-%{version} -type f -print0 | xargs -0 chmod 0644
