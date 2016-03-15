@@ -1350,6 +1350,17 @@
         <str>yyyy-MM-dd</str>
       </arr>
     </processor>
+    <processor class="solr.CloneFieldUpdateProcessorFactory">
+      <str name="source">goodsItemDescriptions</str>
+      <str name="dest">goodsItemCount</str>
+    </processor>
+    <processor class="solr.CountFieldValuesUpdateProcessorFactory">
+      <str name="fieldName">goodsItemCount</str>
+    </processor>
+    <processor class="solr.DefaultValueUpdateProcessorFactory">
+      <str name="fieldName">goodsItemCount</str>
+      <int name="value">0</int>
+    </processor>    
     <!--processor class="solr.AddSchemaFieldsUpdateProcessorFactory">
       <str name="defaultFieldType">strings</str>
       <lst name="typeMapping">
