@@ -23,7 +23,7 @@ navigation features of many of the world's largest internet sites.
 %prep
 %__rm -fr %{buildroot}
 %__mkdir %{buildroot}
-tar zxvf %{SOURCE0} -C %{buildroot}
+%__tar zxvf %{SOURCE0} -C %{buildroot}
 
 %pre
 if [ "$1" = 1 ]
@@ -35,7 +35,7 @@ elif [ "$1" = 2 ]
 then
   if [ -L "/opt/%{name}" ]
   then
-    rm /opt/${name}
+    %__rm /opt/${name}
   fi
 fi
 
@@ -48,18 +48,18 @@ find %{buildroot}/opt/%{name}-%{version} -type d -print0 | xargs -0 chmod 0755
 find %{buildroot}/opt/%{name}-%{version} -type f -print0 | xargs -0 chmod 0644
 chmod -R 0755 %{buildroot}/opt/%{name}-%{version}/bin
 
-mkdir -p %{buildroot}/%{_sysconfdir}/init.d/init.d
+%__mkdir_p %{buildroot}/%{_sysconfdir}/init.d/init.d
 install -m 755 %{name}-%{version}/bin/init.d/solr \
   %{buildroot}/%{_sysconfdir}/init.d/solr
-sed -i -e 's#SOLR_INSTALL_DIR=.*#SOLR_INSTALL_DIR="/opt/solr"#' \
+%__sed -i -e 's#SOLR_INSTALL_DIR=.*#SOLR_INSTALL_DIR="/opt/solr"#' \
   -e 's#SOLR_ENV=.*#SOLR_ENV="/etc/default/solr.in.sh"#' \
   -e 's#RUNAS=.*#RUNAS="solr"#' \
   -e 's#Provides:.*#Provides: solr#' %{buildroot}/%{_sysconfdir}/init.d/solr
 
 install -m 755 -d %{buildroot}/%{_sysconfdir}/default
-chmod 0755 %{buildroot}/%{_sysconfdir}/default
+%__chmod 0755 %{buildroot}/%{_sysconfdir}/default
 
-cat - > %{buildroot}/%{_sysconfdir}/default/solr.in.sh << __EOF__
+%__cat - > %{buildroot}/%{_sysconfdir}/default/solr.in.sh << __EOF__
 SOLR_PID_DIR="%{_localstatedir}/%{name}"
 SOLR_HOME="%{_localstatedir}/%{name}/data"
 LOG4J_PROPS="%{_localstatedir}/%{name}/log4j.properties"
@@ -69,10 +69,13 @@ __EOF__
 install -m 755 -d %{buildroot}/%{_localstatedir}/%{name}/data
 install -m 755 -d %{buildroot}/%{_localstatedir}/%{name}/logs
 
-install -m 755 %{name}-%{version}/server/solr/solr.xml %{buildroot}/%{_localstatedir}/%{name}/data/solr.xml
+install -m 755 %{name}-%{version}/server/solr/solr.xml \
+  %{buildroot}/%{_localstatedir}/%{name}/data/solr.xml
 
-install -m 755 %{name}-%{version}/server/resources/log4j.properties %{buildroot}/%{_localstatedir}/%{name}/log4j.properties
-sed -ie 's#solr.log=.*#solr.log=${solr.solr.home}/../logs#' %{buildroot}/%{_localstatedir}/%{name}/log4j.properties
+install -m 755 %{name}-%{version}/server/resources/log4j.properties \
+  %{buildroot}/%{_localstatedir}/%{name}/log4j.properties
+%__sed -ie 's#solr.log=.*#solr.log=${solr.solr.home}/../logs#' \
+  %{buildroot}/%{_localstatedir}/%{name}/log4j.properties
 
 find %{buildroot}/%{_localstatedir}/%{name} -type d -print0 | xargs -0 chmod 0750
 find %{buildroot}/%{_localstatedir}/%{name} -type f -print0 | xargs -0 chmod 0640
@@ -86,7 +89,7 @@ kill -15 `ps -ef | awk '$1~/solr/{print$2}'` 2>/dev/null || /bin/true
 sleep 1
 getent passwd solr >/dev/null && userdel solr
 getent group solr >/dev/null && groupdel solr
-rm -fr /home/solr || /bin/true
+%__rm -fr /home/solr || /bin/true
 
 %files
 %attr(-,solr,solr) /opt/%{name}-%{version}/
