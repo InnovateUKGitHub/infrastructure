@@ -69,7 +69,7 @@ cat - > /etc/kubernetes/manifests/apiserver.pod.json << __EOF__
         "command": [
           "/usr/bin/kube-apiserver",
           "--v=0",
-          "--address=${MASTER_IP}",
+          "--insecure-bind-address=${MASTER_IP}",
           "--etcd_servers=http://${MASTER_IP}:2379",
           "--service-cluster-ip-range=10.254.0.0/16",
           "--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
