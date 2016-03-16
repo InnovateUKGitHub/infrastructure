@@ -68,3 +68,9 @@ sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
 systemctl start flanneld
 systemctl enable flanneld
 
+# Set the default cluster config
+su -l vagrant << __EOF__
+kubectl config set-cluster default-cluster --server=http://k8smaster:8080
+kubectl config set-context default-system --cluster=default-cluster
+kubectl config use-context default-system
+__EOF__
