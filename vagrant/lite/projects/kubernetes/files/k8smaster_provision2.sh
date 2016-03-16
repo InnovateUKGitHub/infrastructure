@@ -238,3 +238,9 @@ docker pull rhel7/kubernetes-scheduler
 systemctl enable kube-proxy kubelet
 systemctl start kube-proxy kubelet
 
+# Set the default cluster config
+su -l vagrant << __EOF__
+kubectl config set-cluster default-cluster --server=http://k8smaster:8080
+kubectl config set-context default-system --cluster=default-cluster
+kubectl config use-context default-system
+__EOF__
