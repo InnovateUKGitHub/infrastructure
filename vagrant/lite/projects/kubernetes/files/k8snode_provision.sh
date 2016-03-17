@@ -34,6 +34,7 @@ set -o pipefail
 
 MNAME="k8smaster"
 HNAME="`hostname`"
+MADDR=`dirname $(ip addr show enp0s8 | awk '$1~/inet$/{print$2}')`
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
