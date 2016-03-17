@@ -35,6 +35,7 @@
     - k8s
   cpus: 2
   memory: 1024
+  natnet: "%global.natnet%"
   networks:
     - net: private_network
       type: static
@@ -58,6 +59,7 @@
     - k8snodes
   cpus: 2
   memory: 1024
+  natnet: "%global.natnet%"
   networks:
     - net: private_network
       type: static
@@ -80,6 +82,7 @@
     - k8snodes
   cpus: 2
   memory: 1024
+  natnet: "%global.natnet%"
   networks:
     - net: private_network
       type: static
