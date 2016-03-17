@@ -63,6 +63,8 @@ sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://$MNAME:2379\"|" \
   /etc/sysconfig/flanneld
 sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
   /etc/sysconfig/flanneld
+sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
+  /etc/sysconfig/flanneld
 
 # Start Flannel
 systemctl start flanneld
