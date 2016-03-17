@@ -37,10 +37,8 @@ exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 MNAME="k8smaster"
 MASTER_IP="10.100.1.11"
 
-sleep 5
-
 # Edit the /etc/kubernetes/kublet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
+sed -ie "s|KUBELET_ADDRESS=\".*\"|KUBELET_ADDRESS=\"--address=${MASTER_IP}\"|" \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
@@ -229,7 +227,17 @@ do
 done
 systemctl restart etcd ; systemctl enable etcd
 
+# Wait for Docker to complete start up
+echo Waiting for docker to start. This may take a couple minutes.
+DRNG="inactive"
+until [ "$DRNG" = "active" ]
+do
+  sleep 5
+  DRNG=`systemctl is-active docker || /bin/true`
+done
+
 # Get kubernetes master containers
+echo Fetching Kubernetes master containers
 docker pull rhel7/kubernetes-controller-mgr
 docker pull rhel7/kubernetes-apiserver
 docker pull rhel7/kubernetes-scheduler
