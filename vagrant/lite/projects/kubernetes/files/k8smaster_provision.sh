@@ -77,6 +77,7 @@ __EOF__
 # Configure Flannel config
 sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${HNAME}:2379\"|" /etc/sysconfig/flanneld
 sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' /etc/sysconfig/flanneld
+sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" /etc/sysconfig/flanneld
 
 # Force Docker to load the new config
 systemctl stop docker
