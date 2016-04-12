@@ -34,17 +34,23 @@ set -o pipefail
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
-MNAME="k8smaster"
-MASTER_IP="10.100.1.11"
+MNAME="`hostname`"
+MASTER_IP="`getent hosts $MNAME | awk '{print$1}'`"
+
+# Create the k8sresolv.conf file 
+cat - > /etc/kubernetes/k8sresolv.conf << __EOF__
+nameserver 10.254.1.1
+search ${MNAME#*.}
+__EOF__
 
 # Edit the /etc/kubernetes/kublet config
-sed -ie "s|KUBELET_ADDRESS=\".*\"|KUBELET_ADDRESS=\"--address=${MASTER_IP}\"|" \
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--insecure-bind-address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
+sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api-servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"|' \
+sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"--register-node=true --address=${MASTER_IP} --config=/etc/kubernetes/manifests\"|" \
   /etc/kubernetes/kubelet
 
 # Create the manifests directory
@@ -67,7 +73,7 @@ cat - > /etc/kubernetes/manifests/apiserver.pod.json << __EOF__
         "command": [
           "/usr/bin/kube-apiserver",
           "--v=0",
-          "--insecure-bind-address=${MASTER_IP}",
+          "--insecure-bind-address=0.0.0.0",
           "--etcd_servers=http://${MASTER_IP}:2379",
           "--service-cluster-ip-range=10.254.0.0/16",
           "--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
@@ -219,6 +225,73 @@ cat - > /etc/kubernetes/manifests/scheduler.pod.json << __EOF__
 }
 __EOF__
 
+# Setup SkyDNS
+cat - > /etc/kubernetes/manifests/kubedns-rc.yaml << __EOF__
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kube-dns
+  labels:
+    k8s-app: kube-dns
+spec:
+  replicas: 1
+  selector:
+    app: kube-dns
+  template:
+    metadata:
+      labels:
+        app: kube-dns
+    spec:
+      containers:
+        - name: kube2sky
+          image: kubernetes/kube2sky
+          env:
+          - name: KUBERNETES_RO_SERVICE_HOST
+            value: "${MASTER_IP}"
+          - name: KUBERNETES_RO_SERVICE_PORT
+            value: "8080"
+          - name: KUBERNETES_API_PROTOCOL
+            value: "http"
+          command: [
+            "/kube2sky",
+            "-domain=${MNAME#*.}",
+          ]
+        - name: skydns
+          image: kubernetes/skydns
+          env:
+          - name: ETCD_MACHINES
+            value: "http://${MASTER_IP}:8080"
+          - name: SKYDNS_DOMAIN
+            value: "${MNAME#*.}"
+          - name: SKYDNS_NAMESERVERS
+            value: "8.8.8.8:53,8.8.4.4:53"
+          - name: SKYDNS_ADDR
+            value: "0.0.0.0:53"
+          command: [
+            "/skydns",
+            "-domain=cluster1.lite.bis.gov.uk",
+          ]
+          ports:
+            - name: dns
+              containerPort: 53
+              protocol: UDP
+__EOF__
+
+cat - > /etc/kubernetes/manifests/kubedns-svc.yaml << __EOF__
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-dns
+spec:
+  ports:
+  - port: 53
+    protocol: UDP
+    targetPort: 53
+  clusterIP: 10.254.1.1
+  selector:
+    app: kube-dns
+__EOF__
+
 # Stop and configure kubernetes services
 for SERVICES in kube-apiserver kube-controller-manager kube-scheduler
 do
@@ -248,7 +321,8 @@ systemctl start kube-proxy kubelet
 
 # Set the default cluster config
 su -l vagrant << __EOF__
-kubectl config set-cluster default-cluster --server=http://k8smaster:8080
+kubectl config set-cluster default-cluster --server=http://${MNAME}:8080
 kubectl config set-context default-system --cluster=default-cluster
 kubectl config use-context default-system
 __EOF__
+

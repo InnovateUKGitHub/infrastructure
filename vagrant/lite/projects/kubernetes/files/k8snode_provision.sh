@@ -32,9 +32,9 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-MNAME="k8smaster"
+MNAME="k8smaster.devcluster.lite.bis.gov.uk"
 HNAME="`hostname`"
-MADDR=`dirname $(ip addr show enp0s8 | awk '$1~/inet$/{print$2}')`
+MADDR="`getent hosts `hostname` | awk '{print$1}'`"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
@@ -42,14 +42,20 @@ exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
   /etc/kubernetes/config
 
+# Create the k8sresolv.conf file
+cat - > /etc/kubernetes/k8sresolv.conf << __EOF__
+nameserver 10.254.1.1
+search ${HNAME#*.}
+__EOF__
+
 # Set the Kubelet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--insecure-bind-address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=$HNAME\"|" \
+sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${HNAME}\"|" \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://$MNAME:8080\"|" \
+sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true"|' \
+sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true --resolv-conf=/etc/kubernetes/k8sresolv.conf"|' \
   /etc/kubernetes/kubelet
 
 # Start the relevant services
@@ -60,7 +66,7 @@ do
 done
 
 # Set the Flannel config
-sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://$MNAME:2379\"|" \
+sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
   /etc/sysconfig/flanneld
 sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
   /etc/sysconfig/flanneld
@@ -73,7 +79,7 @@ systemctl enable flanneld
 
 # Set the default cluster config
 su -l vagrant << __EOF__
-kubectl config set-cluster default-cluster --server=http://k8smaster:8080
+kubectl config set-cluster default-cluster --server=http://${MNAME}:8080
 kubectl config set-context default-system --cluster=default-cluster
 kubectl config use-context default-system
 __EOF__

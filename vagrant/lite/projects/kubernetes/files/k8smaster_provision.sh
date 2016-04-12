@@ -32,8 +32,8 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-HNAME="k8smaster"
-MADDR="10.100.1.11"
+MNAME="`hostname`"
+MADDR="`getent hosts $MNAME | awk '{print$1}'`"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
@@ -46,7 +46,7 @@ sed -ie 's|#ETCD_LISTEN_PEER_URLS=".*"|ETCD_LISTEN_PEER_URLS="http://localhost:2
   /etc/etcd/etcd.conf
 
 # Edit the Kubernetes config file
-sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${HNAME}:8080\"|" \
+sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${MNAME}:8080\"|" \
   /etc/kubernetes/config
 
 # Edit the Kubernetes API server config
@@ -75,9 +75,12 @@ etcdctl set coreos.com/network/config << __EOF__
 __EOF__
 
 # Configure Flannel config
-sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${HNAME}:2379\"|" /etc/sysconfig/flanneld
-sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' /etc/sysconfig/flanneld
-sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" /etc/sysconfig/flanneld
+sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
+  /etc/sysconfig/flanneld
+sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
+  /etc/sysconfig/flanneld
+sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
+  /etc/sysconfig/flanneld
 
 # Force Docker to load the new config
 systemctl stop docker
