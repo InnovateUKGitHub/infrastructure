@@ -27,7 +27,7 @@
 # This is a Kubernetes cluster
 
 - nick: k8smaster
-  name: k8smaster
+  name: k8smaster.devcluster.lite.bis.gov.uk
   primary: true
   box: "%project.box%"
   groups:
@@ -51,7 +51,7 @@
       path: "%host.files_dir%/k8smaster_provision2.sh"
 
 - nick: k8snode1
-  name: k8snode1
+  name: k8snode1.devcluster.lite.bis.gov.uk
   box: "%project.box%"
   groups:
     - kubernetes
@@ -74,7 +74,7 @@
 
 
 - nick: k8snode2
-  name: k8snode2
+  name: k8snode2.devcluster.lite.bis.gov.uk
   box: "%project.box%"
   groups:
     - kubernetes
