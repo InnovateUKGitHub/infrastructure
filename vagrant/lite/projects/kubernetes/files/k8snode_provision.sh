@@ -34,7 +34,7 @@ set -o pipefail
 
 MNAME="k8smaster.devcluster.lite.bis.gov.uk"
 HNAME="`hostname`"
-MADDR="`getent hosts `hostname` | awk '{print$1}'`"
+MADDR="`getent hosts $HNAME | awk '{print$1}'`"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
