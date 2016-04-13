@@ -49,7 +49,7 @@ search ${HNAME#*.}
 __EOF__
 
 # Set the Kubelet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--insecure-bind-address=0.0.0.0"|' \
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${HNAME}\"|" \
   /etc/kubernetes/kubelet

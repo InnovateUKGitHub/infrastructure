@@ -44,13 +44,13 @@ search ${MNAME#*.}
 __EOF__
 
 # Edit the /etc/kubernetes/kublet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--insecure-bind-address=0.0.0.0"|' \
+sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api-servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"--register-node=true --address=${MASTER_IP} --config=/etc/kubernetes/manifests\"|" \
+sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"--register-node=true --config=/etc/kubernetes/manifests\"|" \
   /etc/kubernetes/kubelet
 
 # Create the manifests directory
