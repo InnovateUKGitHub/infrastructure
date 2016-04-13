@@ -269,7 +269,7 @@ spec:
             value: "0.0.0.0:53"
           command: [
             "/skydns",
-            "-domain=cluster1.lite.bis.gov.uk",
+            "-domain=${MNAME#*.}",
           ]
           ports:
             - name: dns
@@ -325,4 +325,3 @@ kubectl config set-cluster default-cluster --server=http://${MNAME}:8080
 kubectl config set-context default-system --cluster=default-cluster
 kubectl config use-context default-system
 __EOF__
-
