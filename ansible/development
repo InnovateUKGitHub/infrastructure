@@ -1,12 +1,8 @@
-# This is the default ansible 'hosts' file.
-#
-# It should live in /etc/ansible/hosts
-#
-#   - Comments begin with the '#' character
-#   - Blank lines are ignored
-#   - Groups of hosts are delimited by [header] elements
-#   - You can enter hostnames or ip addresses
-#   - A hostname/ip can be a member of multiple groups
+# This is the development ansible 'hosts' file.
+
+# Get port: `vagrant ssh-config k8smaster`
+[development]
+k8smaster ansible_ssh_host=127.0.0.1 ansible_ssh_port=2200
 
 [searchproto1]
 searchproto-1.lite.bis.gov.uk
