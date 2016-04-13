@@ -1,9 +1,22 @@
 ---
 
+- name: Check that the DNS pod exists
+  shell: kubectl get rc kube-dns
+  register: has_dns_pod
+  failed_when: false
+  changed_when: false
+
 - name: Create SkyDNS pod
-  shell: kubectl create -f /etc/kubernetes/manifests/kubedns-rc.yaml
-  ignore_errors: yes
+  shell: kubectl create -f /etc/kubernetes/skydns-rc.yaml
+  when: has_dns_pod.rc != 0
+
+- name: Check that the DNS service exists
+  shell: kubectl get service kube-dns
+  register: has_dns_service
+  failed_when: false
+  changed_when: false
 
 - name: Create SkyDNS service
-  shell: kubectl create -f /etc/kubernetes/manifests/kubedns-svc.yaml
-  ignore_errors: yes
+  shell: kubectl create -f /etc/kubernetes/skydns-svc.yaml
+  when: has_dns_service.rc != 0
+
