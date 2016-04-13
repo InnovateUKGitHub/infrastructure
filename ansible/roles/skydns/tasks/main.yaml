@@ -1,0 +1,9 @@
+---
+
+- name: Create SkyDNS pod
+  shell: kubectl create -f /etc/kubernetes/manifests/kubedns-rc.yaml
+  ignore_errors: yes
+
+- name: Create SkyDNS service
+  shell: kubectl create -f /etc/kubernetes/manifests/kubedns-svc.yaml
+  ignore_errors: yes
