@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: docker-registry
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: docker-registry
+      labels:
+        name: docker-registry
+    spec:
+      containers:
+      - name: docker-registry
+        image: registry:2
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: docker-registry
+          mountPath: "/var/lib/registry"
+      volumes:
+        - name: docker-registry
+          nfs:
+            server: k8sinfnfs1
+            path: "/opt/k8s_infra/docker_reg"
+            readOnly: false
