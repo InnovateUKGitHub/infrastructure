@@ -11,14 +11,22 @@ spec:
         name: jenkins-master
     spec:
       containers:
-      - name: jenkins-master
-        image: jenkinsci/jenkins:2.0-beta-1
-        ports:
-        - containerPort: 8080
-        - containerPort: 50000
-        volumeMounts:
         - name: jenkins-master
-          mountPath: "/var/jenkins_home"
+          image: jenkinsci/jenkins:2.0
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          volumeMounts:
+          - name: jenkins-master
+            mountPath: "/var/jenkins_home"
+        - name: docker-server
+          image: docker:dind
+          args:
+            - "--insecure-registry=registry.lite.bis.gov.uk"
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 2375
       volumes:
         - name: jenkins-master
           nfs:
