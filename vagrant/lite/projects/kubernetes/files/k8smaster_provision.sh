@@ -34,6 +34,7 @@ set -o pipefail
 
 MNAME="`hostname`"
 MADDR="`getent hosts $MNAME | awk '{print$1}'`"
+IDREG="registry.lite.bis.gov.uk"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
@@ -52,6 +53,10 @@ sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${MNAME}:8080\"|" \
 # Edit the Kubernetes API server config
 sed -ie "s|KUBE_API_ADDRESS=\".*\"|KUBE_API_ADDRESS=\"--insecure-bind-address=${MADDR}\"|" \
   /etc/kubernetes/apiserver
+
+# Edit the docker sysconfig
+sed -ie "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
+  /etc/sysconfig/docker
 
 # Start master systemd services
 for SERVICES in docker etcd

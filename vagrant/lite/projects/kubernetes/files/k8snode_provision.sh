@@ -35,6 +35,7 @@ set -o pipefail
 MNAME="k8smaster.devcluster.lite.bis.gov.uk"
 HNAME="`hostname`"
 MADDR="`getent hosts $HNAME | awk '{print$1}'`"
+IDREG="registry.lite.bis.gov.uk"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
@@ -57,6 +58,10 @@ sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://$
   /etc/kubernetes/kubelet
 sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true --resolv-conf=/etc/kubernetes/k8sresolv.conf"|' \
   /etc/kubernetes/kubelet
+
+# Edit the docker sysconfig
+sed -ie "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
+  /etc/sysconfig/docker
 
 # Start the relevant services
 for SERVICE in docker kube-proxy.service kubelet.service
