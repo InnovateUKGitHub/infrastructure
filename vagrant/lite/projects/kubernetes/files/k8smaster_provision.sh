@@ -39,7 +39,7 @@ IDREG="registry.lite.bis.gov.uk"
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
 # Edit the /etc/etcd/etcd.conf and place the correct values
-sed -ie 's|ETCD_ADVERTISE_CLIENT_URLS=".*"|ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:2379"|' \
+sed -ie "s|ETCD_ADVERTISE_CLIENT_URLS=\".*\"|ETCD_ADVERTISE_CLIENT_URLS=\"http://${MADDR}:2379\"|" \
   /etc/etcd/etcd.conf
 sed -ie 's|ETCD_LISTEN_CLIENT_URLS=".*"|ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"|' \
   /etc/etcd/etcd.conf

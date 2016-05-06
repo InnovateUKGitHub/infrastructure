@@ -36,12 +36,9 @@ exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
 MNAME="`hostname`"
 MASTER_IP="`getent hosts $MNAME | awk '{print$1}'`"
-
-# Create the k8sresolv.conf file 
-cat - > /etc/kubernetes/k8sresolv.conf << __EOF__
-nameserver 10.254.1.1
-search ${MNAME#*.}
-__EOF__
+NAMEDSRV="10.100.100.3"
+SKYDNSIP="10.254.1.1"
+DOMNAME="lite.local"
 
 # Edit the /etc/kubernetes/kublet config
 sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
@@ -50,7 +47,12 @@ sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAM
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api-servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"--register-node=true --config=/etc/kubernetes/manifests\"|" \
+
+KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"
+KUBELET_ARGS="$KUBELET_ARGS --resolv-conf=''"
+KUBELET_ARGS="$KUBELET_ARGS --cluster-dns=${SKYDNSIP} --cluster-domain=${DOMNAME}"
+
+sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"${KUBELET_ARGS}\"|" \
   /etc/kubernetes/kubelet
 
 # Create the manifests directory
@@ -230,51 +232,60 @@ cat - > /etc/kubernetes/manifests/kubedns-rc.yaml << __EOF__
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: kube-dns
+  name: kube-dns-v11
+  namespace: default
   labels:
     k8s-app: kube-dns
+    version: v11
+    kubernetes.io/cluster-service: "true"
 spec:
   replicas: 1
   selector:
-    app: kube-dns
+    k8s-app: kube-dns
+    version: v11
   template:
     metadata:
       labels:
-        app: kube-dns
+        k8s-app: kube-dns
+        version: v11
+        kubernetes.io/cluster-service: "true"
     spec:
       containers:
+        - name: etcd
+          image: gcr.io/google_containers/etcd-amd64:2.2.1
+          command:
+          - /usr/local/bin/etcd
+          - -data-dir
+          - /var/etcd/data
+          - -listen-client-urls
+          - http://127.0.0.1:2379,http://127.0.0.1:4001
+          - -advertise-client-urls
+          - http://127.0.0.1:2379,http://127.0.0.1:4001
+          - -initial-cluster-token
+          - skydns-etcd
         - name: kube2sky
-          image: kubernetes/kube2sky
-          env:
-          - name: KUBERNETES_RO_SERVICE_HOST
-            value: "${MASTER_IP}"
-          - name: KUBERNETES_RO_SERVICE_PORT
-            value: "8080"
-          - name: KUBERNETES_API_PROTOCOL
-            value: "http"
-          command: [
-            "/kube2sky",
-            "-domain=${MNAME#*.}",
-          ]
+          image: gcr.io/google_containers/kube2sky-amd64:1.15
+          args:
+          - --domain=${DOMNAME}
+          - --kube-master-url=http://${MASTER_IP}:8080
         - name: skydns
-          image: kubernetes/skydns
+          image: gcr.io/google_containers/skydns:2015-10-13-8c72f8c
           env:
-          - name: ETCD_MACHINES
-            value: "http://${MASTER_IP}:8080"
-          - name: SKYDNS_DOMAIN
-            value: "${MNAME#*.}"
           - name: SKYDNS_NAMESERVERS
-            value: "8.8.8.8:53,8.8.4.4:53"
-          - name: SKYDNS_ADDR
-            value: "0.0.0.0:53"
-          command: [
-            "/skydns",
-            "-domain=${MNAME#*.}",
-          ]
+            value: ${NAMEDSRV}:53
+          args:
+          # command = "/skydns"
+          - -domain=${DOMNAME}.
+          - -machines=http://127.0.0.1:4001
+          - -addr=0.0.0.0:53
           ports:
-            - name: dns
-              containerPort: 53
+            - containerPort: 53
+              name: dns
               protocol: UDP
+            - containerPort: 53
+              name: dns-tcp
+              protocol: TCP
+      dnsPolicy: Default
 __EOF__
 
 cat - > /etc/kubernetes/manifests/kubedns-svc.yaml << __EOF__
@@ -282,14 +293,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kube-dns
+  namespace: default
+  labels:
+    k8s-app: kube-dns
+    kubernetes.io/cluster-service: "true"
+    kubernetes.io/name: "KubeDNS"
 spec:
-  ports:
-  - port: 53
-    protocol: UDP
-    targetPort: 53
-  clusterIP: 10.254.1.1
   selector:
-    app: kube-dns
+    k8s-app: kube-dns
+  clusterIP: ${SKYDNSIP}
+  ports:
+  - name: dns
+    port: 53
+    protocol: UDP
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
 __EOF__
 
 # Stop and configure kubernetes services

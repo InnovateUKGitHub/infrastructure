@@ -36,18 +36,14 @@ MNAME="k8smaster.devcluster.lite.bis.gov.uk"
 HNAME="`hostname`"
 MADDR="`getent hosts $HNAME | awk '{print$1}'`"
 IDREG="registry.lite.bis.gov.uk"
+DOMNAME="lite.local"
+SKYDNSIP="10.254.1.1"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
 # Set the Kubernetes config
 sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
   /etc/kubernetes/config
-
-# Create the k8sresolv.conf file
-cat - > /etc/kubernetes/k8sresolv.conf << __EOF__
-nameserver 10.254.1.1
-search ${HNAME#*.}
-__EOF__
 
 # Set the Kubelet config
 sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
@@ -56,7 +52,12 @@ sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${HNAM
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
-sed -ie 's|KUBELET_ARGS=".*"|KUBELET_ARGS="--register-node=true --resolv-conf=/etc/kubernetes/k8sresolv.conf"|' \
+
+KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"
+KUBELET_ARGS="$KUBELET_ARGS --resolv-conf=''"
+KUBELET_ARGS="$KUBELET_ARGS --cluster-dns=${SKYDNSIP} --cluster-domain=${DOMNAME}"
+
+sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"${KUBELET_ARGS}\"|" \
   /etc/kubernetes/kubelet
 
 # Edit the docker sysconfig
