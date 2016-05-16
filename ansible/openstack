@@ -1,0 +1,16 @@
+# Openstack cloud hosts
+
+[openstack-devel:children]
+mgmt
+app
+
+[mgmt]
+k8sinfmas1
+k8sinfnode1
+k8sinfnode2
+k8sinfnfs1
+
+[app]
+k8sappmas1
+k8sappnode01
+k8sappnode02
