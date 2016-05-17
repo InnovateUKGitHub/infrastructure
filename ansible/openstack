@@ -4,13 +4,26 @@
 mgmt
 app
 
-[mgmt]
+[mgmt:children]
+mgmt-master
+mgmt-nodes
+
+[app:children]
+app-master
+app-nodes
+
+[mgmt-master]
 k8sinfmas1
+
+[mgmt-nodes]
 k8sinfnode1
 k8sinfnode2
 k8sinfnfs1
 
-[app]
+[app-master]
 k8sappmas1
+
+[app-nodes]
 k8sappnode01
 k8sappnode02
+

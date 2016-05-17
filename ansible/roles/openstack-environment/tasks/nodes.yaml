@@ -24,39 +24,66 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Create the node for k8sinfmas1
-  hosts: localhost
+- name: Create the Kubernetes master for Management
   os_server:
-  state: present
-  name: k8sinfmas1
-  availability_zone: nova
-  region_zone: RegionOne
-  image: fa13d75c-0d90-4e4d-b5d7-194442106ed8
-  key_name: "Justin Cook"
-  timeout: 200
-  flavor: UKF1-std-2x2
-  network: mgmt
-  security_groups:
-    - kubernetes_master
-    - "Mgmt Nodes"
-    - "Remote Repositories"
+    state: present
+    name: "{{ inventory_hostname }}"
+    availability_zone: nova
+    image: CentOS_Atomic_7_2016-05
+    key_name: "Justin Cook"
+    timeout: 200
+    flavor: UKF1-std-2x2
+    network: mgmt
+    security_groups:
+      - kubernetes_master
+      - "Mgmt Nodes"
+      - "Remote Repositories"
+  when: inventory_hostname in "{{ groups['mgmt-master'] }}"
 
-- name: Create the nodes for k8sin
-  hosts: localhost
+- name: Create the Kubernetes master for App
   os_server:
-  state: present
-  name: {{ item }}
-  availability_zone: nova
-  region_zone: RegionOne
-  image: fa13d75c-0d90-4e4d-b5d7-194442106ed8
-  key_name: "Justin Cook"
-  timeout: 200
-  flavor: 4
-  network: mgmt
-    - kubernetes_node
-    - "Mgmt Nodes"
-    - "Remote Repositories"
-  with_items:
-    - k8sinfnode01
-    - k8sinfnode02
+    state: present
+    name: "{{ inventory_hostname }}"
+    availability_zone: nova
+    image: CentOS_Atomic_7_2016-05
+    key_name: "Justin Cook"
+    timeout: 200
+    flavor: UKF1-std-2x2
+    network: app
+    security_groups:
+      - kubernetes_master
+      - "App Nodes"
+      - "Remote Repositories"
+  when: inventory_hostname in "{{ groups['app-master'] }}"
 
+- name: Create the Kubernetes nodes for Management
+  os_server:
+    state: present
+    name: "{{ inventory_hostname }}"
+    availability_zone: nova
+    image: CentOS_Atomic_7_2016-05
+    key_name: "Justin Cook"
+    timeout: 200
+    flavor: UKF1-std-4x4
+    network: mgmt
+    security_groups:
+      - kubernetes_node
+      - "Mgmt Nodes"
+      - "Remote Repositories"
+  when: inventory_hostname in "{{ groups['mgmt-nodes'] }}"
+
+- name: Create the Kubernetes nodes for App
+  os_server:
+    state: present
+    name: "{{ inventory_hostname }}"
+    availability_zone: nova
+    image: CentOS_Atomic_7_2016-05
+    key_name: "Justin Cook"
+    timeout: 200
+    flavor: UKF1-std-4x4
+    network: app
+    security_groups:
+      - kubernetes_node
+      - "App Nodes"
+      - "Remote Repositories"
+  when: inventory_hostname in "{{ groups['app-nodes'] }}"

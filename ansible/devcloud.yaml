@@ -25,14 +25,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - hosts: openstack-devel
+  connection: local
   roles:
     - openstack-environment
 #    - skydns
+  vars:
+    ansible_python_interpreter: "/usr/bin/env python"
  
-#  vars_prompt:
-#    - name: "rapi_username"
-#      prompt: "Enter username"
-
-#    - name: "rapi_password"
-#      prompt: "Enter password"
-#      private: yes
