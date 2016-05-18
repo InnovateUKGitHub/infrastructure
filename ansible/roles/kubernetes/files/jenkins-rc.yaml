@@ -19,17 +19,39 @@ spec:
           volumeMounts:
           - name: jenkins-master
             mountPath: "/var/jenkins_home"
+          - name: jenkins-maven
+            mountPath: "/maven"
+          - name: docker-bin
+            mountPath: "/docker"
         - name: docker-server
           image: docker:dind
+          #lifecycle:
+          #  postStart:
+          #    exec:
+          #      command:
+          #      - "cp"
+          #      - "-p"
+          #      - "/usr/local/bin/docker"
+          #      - "/docker/"
           args:
             - "--insecure-registry=registry.lite.bis.gov.uk"
           securityContext:
             privileged: true
           ports:
             - containerPort: 2375
+          volumeMounts:
+          - name: docker-bin
+            mountPath: "/docker"
       volumes:
         - name: jenkins-master
           nfs:
             server: k8sinfnfs1
             path: "/opt/k8s_infra/jenkins_master"
             readOnly: false
+        - name: jenkins-maven
+          nfs:
+            server: k8sinfnfs1
+            path: "/opt/k8s_infra/jenkins_maven"
+            readOnly: true
+        - name: docker-bin
+          emptyDir: {}
