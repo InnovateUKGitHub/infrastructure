@@ -18,9 +18,16 @@ spec:
         volumeMounts:
         - name: docker-registry
           mountPath: "/var/lib/registry"
+        - name: docker-config
+          mountPath: "/etc/docker/registry"
       volumes:
         - name: docker-registry
           nfs:
             server: k8sinfnfs1
             path: "/opt/k8s_infra/docker_reg"
             readOnly: false
+        - name: docker-config
+          nfs:
+            server: k8sinfnfs1
+            path: "/opt/k8s_infra/docker_reg_conf"
+            readOnly: true
