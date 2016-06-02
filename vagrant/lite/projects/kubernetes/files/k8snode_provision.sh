@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Provision a Kubernetes node on CentOS Atomic
+# Provision a Kubernetes node on RHEL7 or RHEL Atomic
 # https://access.redhat.com/documentation/
 #+en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-guide/
 
