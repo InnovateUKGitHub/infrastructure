@@ -28,15 +28,42 @@
 # https://access.redhat.com/documentation/
 #+en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-guide/
 
+set -x
+
 set -o nounset
 set -o errexit
 set -o pipefail
 
 MNAME="`hostname`"
-MADDR="`getent hosts $MNAME | awk '{print$1}'`"
+MADDR="`getent ahosts $MNAME | tail -n1 | awk '{print$1}'`"
 IDREG="registry.lite.bis.gov.uk"
 
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
+
+# If this is not Atomic install the appropriate software.
+install_prerequisites () {
+  DISTRO="`rpm -qf /etc/redhat-release 2>/dev/null`" || return
+  if [ "${DISTRO%%-*}" = "redhat" ]
+  then
+    subscription-manager clean
+    #subscription-manager register --username=$SUB_USERNAME --password=$SUB_PASSWORD
+    #POOL_ID="`subscription-manager list --available | awk '$0~/^Pool\ ID/{print$3}' | tail -n1`"
+    #subscription-manager attach --pool=$POOL_ID
+    subscription-manager register --auto-attach --username=$SUB_USERNAME --password=$SUB_PASSWORD
+    subscription-manager repos --enable=rhel-7-server-extras-rpms
+    subscription-manager repos --enable=rhel-7-server-optional-rpms
+    yum install -y docker device-mapper-libs device-mapper-event-libs
+    systemctl start docker.service
+    systemctl enable docker.service
+    yum install -y kubernetes etcd flannel
+    systemctl disable firewalld
+    systemctl stop firewalld
+  else
+    echo "Not Red Hat so crossing fingers"
+  fi
+}
+
+install_prerequisites
 
 # Edit the /etc/etcd/etcd.conf and place the correct values
 sed -ie "s|ETCD_ADVERTISE_CLIENT_URLS=\".*\"|ETCD_ADVERTISE_CLIENT_URLS=\"http://${MADDR}:2379\"|" \
@@ -90,7 +117,7 @@ sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
 # Force Docker to load the new config
 systemctl stop docker
 ip link del docker0
-systemctl enable docker
+#systemctl enable docker
 
 # Enable flanneld and reboot so all systems pick up
 systemctl enable flanneld

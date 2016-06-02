@@ -35,7 +35,7 @@ set -o pipefail
 exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
 
 MNAME="`hostname`"
-MASTER_IP="`getent hosts $MNAME | awk '{print$1}'`"
+MASTER_IP="`getent ahosts $MNAME | tail -n1 | awk '{print$1}'`"
 NAMEDSRV="10.100.100.3"
 SKYDNSIP="10.254.1.1"
 DOMNAME="lite.local"
@@ -46,6 +46,11 @@ sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
 sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${MNAME}\"|" \
   /etc/kubernetes/kubelet
 sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api-servers=http://${MNAME}:8080\"|" \
+  /etc/kubernetes/kubelet
+
+KPIC="--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest"
+
+sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_POD_INFRA_CONTAINER=\"$KPIC\"|" \
   /etc/kubernetes/kubelet
 
 KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"
@@ -330,9 +335,9 @@ done
 
 # Get kubernetes master containers
 echo Fetching Kubernetes master containers
-docker pull rhel7/kubernetes-controller-mgr
-docker pull rhel7/kubernetes-apiserver
-docker pull rhel7/kubernetes-scheduler
+docker pull registry.access.redhat.com/rhel7/kubernetes-apiserver
+docker pull registry.access.redhat.com/rhel7/kubernetes-controller-mgr
+docker pull registry.access.redhat.com/rhel7/kubernetes-scheduler
 
 # Start the kubelet to launch the kubernetes service containers
 systemctl enable kube-proxy kubelet
