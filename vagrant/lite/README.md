@@ -50,6 +50,16 @@ vagrant-service-manager (1.0.2)
 vagrant-share (1.1.5, system)
 ```
 
+## Preparing VirtualBox
+
+VirtualBox should have the extensions installed and a host-only network needs
+to be created. Enter VirtualBox > Preferences, select teh Network menu and then
+Host-only Networks. Create a new network named vboxnet0 with the following:
+
+-  IPv4 Address: 10.100.0.254
+-  IPv4 Network Mask: 255.255.0.0
+-  Disable DHCP Server
+
 ## Usage
 
 By default, commands are directed toward the Kubernetes master box. Therefore,
