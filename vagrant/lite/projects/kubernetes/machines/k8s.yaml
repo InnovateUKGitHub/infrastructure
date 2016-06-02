@@ -31,75 +31,75 @@
   primary: true
   box: "%project.box%"
   groups:
-    - kubernetes
-    - k8s
+  - kubernetes
+  - k8s
   cpus: 2
   memory: 2048
   natnet: "%global.natnet%"
   networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.11
-      mask: 255.255.255.0
-      interface: "%project.interface%"
+  - net: private_network
+    type: static
+    ip: 10.100.1.11
+    netmask: 255.255.255.0
+    interface: "%project.interface%"
   hosts: "%project.hosts%"
   provision:
-    - type: shell
-      path: "%host.files_dir%/k8smaster_provision.sh"
-      env: 
-        SUB_USERNAME: "%global.rh_username%"
-        SUB_PASSWORD: "%global.rh_password%"
-    - type: reload
-    - type: shell
-      path: "%host.files_dir%/k8smaster_provision2.sh"
+  - type: shell
+    path: "%host.files_dir%/k8smaster_provision.sh"
+    env: 
+      SUB_USERNAME: "%global.rh_username%"
+      SUB_PASSWORD: "%global.rh_password%"
+  - type: reload
+  - type: shell
+    path: "%host.files_dir%/k8smaster_provision2.sh"
 
 - nick: k8snode1
   name: k8snode1.devcluster.lite.bis.gov.uk
   box: "%project.box%"
   groups:
-    - kubernetes
-    - k8s
-    - k8snodes
+  - kubernetes
+  - k8s
+  - k8snodes
   cpus: 2
   memory: 2048
   natnet: "%global.natnet%"
   networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.21
-      mask: 255.255.255.0
-      interface: "%project.interface%"
+  - net: private_network
+    type: static
+    ip: 10.100.1.21
+    mask: 255.255.255.0
+    interface: "%project.interface%"
   hosts: "%project.hosts%"
   provision:
-    - type: shell
-      path: "%host.files_dir%/k8snode_provision.sh"
-      env:
-        SUB_USERNAME: "%global.rh_username%"
-        SUB_PASSWORD: "%global.rh_password%"
-    - type: reload
+  - type: shell
+    path: "%host.files_dir%/k8snode_provision.sh"
+    env:
+      SUB_USERNAME: "%global.rh_username%"
+      SUB_PASSWORD: "%global.rh_password%"
+  - type: reload
 
 - nick: k8snode2
   name: k8snode2.devcluster.lite.bis.gov.uk
   box: "%project.box%"
   groups:
-    - kubernetes
-    - k8s
-    - k8snodes
+  - kubernetes
+  - k8s
+  - k8snodes
   cpus: 2
   memory: 2048
   natnet: "%global.natnet%"
   networks:
-    - net: private_network
-      type: static
-      ip: 10.100.1.22
-      mask: 255.255.255.0
-      interface: "%project.interface%"
+  - net: private_network
+    type: static
+    ip: 10.100.1.22
+    mask: 255.255.255.0
+    interface: "%project.interface%"
   hosts: "%project.hosts%"
   provision:
-    - type: shell
-      path: "%host.files_dir%/k8snode_provision.sh"
-      env:
-        SUB_USERNAME: "%global.rh_username%"
-        SUB_PASSWORD: "%global.rh_password%"
-    - type: reload
+  - type: shell
+    path: "%host.files_dir%/k8snode_provision.sh"
+    env:
+      SUB_USERNAME: "%global.rh_username%"
+      SUB_PASSWORD: "%global.rh_password%"
+  - type: reload
       
