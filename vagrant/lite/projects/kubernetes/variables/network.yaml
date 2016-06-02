@@ -26,7 +26,7 @@
 
 # These are Kubernetes project variables
 
-box: centos/atomic-host
+box: jhcook/rhel7
 interface: vboxnet0
 hosts:
   - ip: 10.100.1.11
