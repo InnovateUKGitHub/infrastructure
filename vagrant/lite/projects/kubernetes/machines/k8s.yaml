@@ -34,7 +34,7 @@
     - kubernetes
     - k8s
   cpus: 2
-  memory: 1024
+  memory: 2048
   natnet: "%global.natnet%"
   networks:
     - net: private_network
@@ -46,6 +46,9 @@
   provision:
     - type: shell
       path: "%host.files_dir%/k8smaster_provision.sh"
+      env: 
+        SUB_USERNAME: "%global.rh_username%"
+        SUB_PASSWORD: "%global.rh_password%"
     - type: reload
     - type: shell
       path: "%host.files_dir%/k8smaster_provision2.sh"
@@ -58,7 +61,7 @@
     - k8s
     - k8snodes
   cpus: 2
-  memory: 1024
+  memory: 2048
   natnet: "%global.natnet%"
   networks:
     - net: private_network
@@ -70,8 +73,10 @@
   provision:
     - type: shell
       path: "%host.files_dir%/k8snode_provision.sh"
+      env:
+        SUB_USERNAME: "%global.rh_username%"
+        SUB_PASSWORD: "%global.rh_password%"
     - type: reload
-
 
 - nick: k8snode2
   name: k8snode2.devcluster.lite.bis.gov.uk
@@ -81,7 +86,7 @@
     - k8s
     - k8snodes
   cpus: 2
-  memory: 1024
+  memory: 2048
   natnet: "%global.natnet%"
   networks:
     - net: private_network
@@ -93,5 +98,8 @@
   provision:
     - type: shell
       path: "%host.files_dir%/k8snode_provision.sh"
+      env:
+        SUB_USERNAME: "%global.rh_username%"
+        SUB_PASSWORD: "%global.rh_password%"
     - type: reload
       
