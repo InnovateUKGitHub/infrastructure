@@ -58,6 +58,8 @@ install_prerequisites () {
     yum install -y kubernetes-node etcd flannel
     systemctl disable firewalld
     systemctl stop firewalld
+    sed -ie 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
+    setenforce 0
   else
     echo "Not Red Hat so crossing fingers"
   fi
