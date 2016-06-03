@@ -55,7 +55,7 @@ install_prerequisites () {
     yum install -y docker device-mapper-libs device-mapper-event-libs
     systemctl start docker.service
     systemctl enable docker.service
-    yum install -y kubernetes-node etcd flannel
+    yum install -y kubernetes-node flannel
     systemctl disable firewalld
     systemctl stop firewalld
     sed -ie 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
