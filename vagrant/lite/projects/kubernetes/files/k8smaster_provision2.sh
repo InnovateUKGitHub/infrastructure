@@ -50,7 +50,7 @@ sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api-servers=http://$
 
 KPIC="--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest"
 
-sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_POD_INFRA_CONTAINER=\"$KPIC\"|" \
+sed -ie "s|KUBELET_POD_INFRA_CONTAINER=\".*\"|KUBELET_POD_INFRA_CONTAINER=\"$KPIC\"|" \
   /etc/kubernetes/kubelet
 
 KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"
