@@ -54,7 +54,7 @@
     path: "%host.files_dir%/k8smaster_provision2.sh"
   - type: shell
     run: always
-    inline: "ip route add 10.254.0.0/16 dev flannel.1"
+    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
 
 - nick: k8snode1
   name: k8snode1.devcluster.lite.bis.gov.uk
@@ -82,7 +82,7 @@
   - type: reload
   - type: shell
     run: always
-    inline: "ip route add 10.254.0.0/16 dev flannel.1"
+    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
 
 - nick: k8snode2
   name: k8snode2.devcluster.lite.bis.gov.uk
@@ -110,5 +110,5 @@
   - type: reload
   - type: shell
     run: always
-    inline: "ip route add 10.254.0.0/16 dev flannel.1"
+    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
       
