@@ -34,8 +34,12 @@ hosts:
     host: ns2
   - ip: 10.100.100.10
     host: ansible
-  - ip: 10.100.100.11
+  - ip: 10.100.1.11
     host: k8smaster
+  - ip: 10.100.1.21
+    host: k8snode1
+  - ip: 10.100.1.22
+    host: k8snode2
   - ip: 10.100.100.20
     host: repo1
   - ip: 10.100.1.204
