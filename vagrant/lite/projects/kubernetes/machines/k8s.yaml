@@ -42,7 +42,9 @@
     ip: 10.100.1.11
     netmask: 255.255.255.0
     interface: "%project.interface%"
-  hosts: "%project.hosts%"
+#  hosts: "%project.hosts%"
+  hosts: "%global.hosts%"
+  authorized_keys: "%global.authorized_keys%"
   provision:
   - type: shell
     path: "%host.files_dir%/k8smaster_provision.sh"
@@ -52,9 +54,9 @@
   - type: reload
   - type: shell
     path: "%host.files_dir%/k8smaster_provision2.sh"
-  - type: shell
-    run: always
-    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
+#  - type: shell
+#    run: always
+#    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
 
 - nick: k8snode1
   name: k8snode1.devcluster.lite.bis.gov.uk
@@ -72,7 +74,9 @@
     ip: 10.100.1.21
     mask: 255.255.255.0
     interface: "%project.interface%"
-  hosts: "%project.hosts%"
+#  hosts: "%project.hosts%"
+  hosts: "%global.hosts%"
+  authorized_keys: "%global.authorized_keys%"
   provision:
   - type: shell
     path: "%host.files_dir%/k8snode_provision.sh"
@@ -80,9 +84,9 @@
       SUB_USERNAME: "%global.rh_username%"
       SUB_PASSWORD: "%global.rh_password%"
   - type: reload
-  - type: shell
-    run: always
-    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
+#  - type: shell
+#    run: always
+#    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
 
 - nick: k8snode2
   name: k8snode2.devcluster.lite.bis.gov.uk
@@ -100,7 +104,9 @@
     ip: 10.100.1.22
     mask: 255.255.255.0
     interface: "%project.interface%"
-  hosts: "%project.hosts%"
+#  hosts: "%project.hosts%"
+  hosts: "%global.hosts%"
+  authorized_keys: "%global.authorized_keys%"
   provision:
   - type: shell
     path: "%host.files_dir%/k8snode_provision.sh"
@@ -108,7 +114,7 @@
       SUB_USERNAME: "%global.rh_username%"
       SUB_PASSWORD: "%global.rh_password%"
   - type: reload
-  - type: shell
-    run: always
-    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
+#  - type: shell
+#    run: always
+#    inline: "sleep 10 ; ip route add 10.254.0.0/16 dev flannel.1 || /bin/true"
       
