@@ -27,6 +27,6 @@
 # Look for a private key "id_rsa" and copy it over for use within the guest.
 # These are the project variables specifically for mgmt
 
-box: "jhcook/centos7"
+box: "bis/rhel7"
 interface: "vboxnet0"
 
