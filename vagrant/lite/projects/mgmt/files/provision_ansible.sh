@@ -32,8 +32,14 @@ set -o pipefail
 
 if [ ! -f "/etc/yum.repos.d/epel.repo" ]
 then
-  rpm -i https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+  rpm -i https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm
 fi
+
+subscription-manager clean
+subscription-manager register --auto-attach --username=$SUB_USERNAME --password=$SUB_PASSWORD
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+subscription-manager repos --enable=rhel-7-server-optional-rpms
 
 yum -y install ansible
 yum -y install git
