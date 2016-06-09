@@ -32,35 +32,38 @@
   primary: true
   box: "%project.box%"
   groups:
-    - all
-    - mgmt
-    - software
-    - ansible
+  - all
+  - mgmt
+  - software
+  - ansible
   name: ansible.lite.bis.gov.uk
   memory: 1024
   cpus: 2
   box_check_update: true
   autostart: true
   hosts: "%global.hosts%"
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.10
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/keys.sh"
-    - type: shell
-      path: "%host.files_dir%/provision_ansible.sh"
   authorized_keys: "%global.authorized_keys%"
+  networks:
+  - net: private_network
+    type: static
+    ip: 10.100.100.10
+    mask: 255.255.0.0
+    interface: "%project.interface%"
+  provision:
+  - type: shell
+    path: "%host.files_dir%/keys.sh"
+  - type: shell
+    path: "%host.files_dir%/provision_ansible.sh"
+    env:
+      SUB_USERNAME: "%global.rh_username%"
+      SUB_PASSWORD: "%global.rh_password%"
 
 # Docker / Yum
 - nick: repo1
   groups:
-    - all
-    - mgmt
-    - software
+  - all
+  - mgmt
+  - software
   name: repo1.lite.bis.gov.uk
   box: "%project.box%"
   memory: 2048
@@ -68,13 +71,13 @@
   box_check_update: true
   autostart: true
   hosts: "%global.hosts%"
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.20
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/provision_repo1.sh"
   authorized_keys: "%global.authorized_keys%"
+  networks:
+  - net: private_network
+    type: static
+    ip: 10.100.100.20
+    mask: 255.255.0.0
+    interface: "%project.interface%"
+  provision:
+  - type: shell
+    path: "%host.files_dir%/provision_repo1.sh"
