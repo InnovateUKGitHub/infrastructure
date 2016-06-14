@@ -1,0 +1,160 @@
+---
+# Copyright (c) 2016, Department for Business, Innovation and Skills
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- name: Create VPN security group
+  os_security_group:
+    name=vpn
+    description="VPN access from the Internet"
+
+- name: Allow vpn tcp:9700 ingress
+  os_security_group_rule:
+    security_group: vpn
+    protocol: tcp
+    port_range_min: 9700
+    port_range_max: 9700
+    remote_ip_prefix: "{{ item }}"
+  with_items:
+  - 94.118.0.0/16 
+  - 94.119.0.0/16
+  - 80.235.133.135/32
+
+- name: Allow vpn tcp:1194 egress from 0.0.0.0/0
+  os_security_group_rule:
+    security_group: vpn
+    protocol: udp
+    direction: egress
+    port_range_min: 1194
+    port_range_max: 1194
+    remote_ip_prefix: 0.0.0.0/0
+
+- name: Create ssh security group
+  os_security_group:
+    name=ssh
+    description="SSH traffic to and from a node"
+
+- name: Allow ssh (tcp:22) to/from any host
+  os_security_group_rule:
+    security_group: ssh
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
+
+- name: Create remote_repositories security group
+  os_security_group:
+    name=remote_repositories
+    description="Traffic for node's access to remote_repositories"
+
+- name: Allow remote_repositories all tcp egress
+  os_security_group_rule:
+    security_group: remote_repositories
+    protocol: tcp
+    direction: egress
+    port_range_min: 1
+    port_range_max: 65535
+    remote_ip_prefix: 0.0.0.0/0
+
+- name: Create ipa_server security group
+  os_security_group:
+    name=ipa_server
+    description="Traffic for IPA Server nodes"
+
+- name: Allow ipa-server tcp:{{ item }} from 10.100.x.x
+  os_security_group_rule:
+    security_group: ipa_server
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - 53
+  - 80
+  - 88
+  - 389
+  - 443
+  - 464
+  - 636
+
+- name: Allow ipa_server udp:{{ item }} from 10.100.x.x
+  os_security_group_rule:
+    security_group: ipa_server
+    protocol: udp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - 53
+  - 88
+  - 123
+  - 464
+
+- name: Create app_nodes security group
+  os_security_group:
+    name=app_nodes
+    description="Traffic for app enclave nodes"
+
+- name: Allow app_nodes all ingress from app1subnet
+  os_security_group_rule:
+    security_group: app_nodes
+    protocol: "{{ item }}"
+    port_range_min: 1
+    port_range_max: 65535
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - tcp
+  - udp
+
+- name: Allow app_nodes all tcp egress to anywhere
+  os_security_group_rule:
+    security_group: app_nodes
+    protocol: tcp
+    direction: egress
+    port_range_min: 1
+    port_range_max: 65535
+    remote_ip_prefix: 0.0.0.0/24
+
+- name: Create mgmt security group
+  os_security_group:
+    name=mgmt_nodes
+    description="Traffic for mgmt enclave nodes"
+
+- name: Allow mgmt_nodes all egress to anywhere
+  os_security_group_rule:
+    security_group: mgmt_nodes
+    protocol: "{{ item }}"
+    direction: egress
+    port_range_min: 1
+    port_range_max: 65535
+    remote_ip_prefix: 0.0.0.0/24
+  with_items:
+  - tcp
+  - udp
+
+
