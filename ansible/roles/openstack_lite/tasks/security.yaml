@@ -24,6 +24,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+- name: Import public keys
+  os_keypair:
+    name: "{{ item.split('/')[-1].rsplit('.')[0] }}"
+    public_key_file: "{{ item }}"
+  with_fileglob:
+  - roles/openstack_lite/files/*
+
 - name: Create VPN security group
   os_security_group:
     name=vpn
