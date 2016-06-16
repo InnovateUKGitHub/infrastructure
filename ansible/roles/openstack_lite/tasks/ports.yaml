@@ -24,10 +24,53 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# DMZ ports
 - name: Create a port for the golden host
   os_port:
     state: present
-    name: dmzport1
+    name: dmzport11
     network: dmz
     fixed_ips:
       - ip_address: 10.100.254.11
+
+# MGMT ports
+- name: Create a port for the first IPA server
+  os_port:
+    state: present
+    name: mgmtport11
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.11
+
+- name: Create a port for the second IPA server
+  os_port:
+    state: present
+    name: mgmtport12
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.12
+
+- name: Create a port for the mgmt Kubernetes master
+  os_port:
+    state: present
+    name: mgmtport21
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.21
+
+# APP ports
+- name: Create a port for the Kubernetes master
+  os_port:
+    state: present
+    name: appport11
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.11
+
+- name: Create a port for a Kubernetes node
+  os_port:
+    state: present
+    name: appport21
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.21
