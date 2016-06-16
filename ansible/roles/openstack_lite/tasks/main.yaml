@@ -35,7 +35,6 @@
 
 # Create the ports to assign each instance to
 - include: ports.yaml
-  ignore_errors: yes
 
 # Create instances homed to specific subnets with attached security groups
 - include: instances.yaml
