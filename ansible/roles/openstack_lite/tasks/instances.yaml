@@ -35,6 +35,6 @@
     security_groups:
       - external_ssh
     nics:
-      - port-name: dmzport1
+      - port-name: dmzport11
     meta:
       hostname: ukbliteep01
