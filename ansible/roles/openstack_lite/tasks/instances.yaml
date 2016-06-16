@@ -24,3 +24,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+- name: Create the golden host
+  os_server:
+    name: ukbliteep01
+    image: RHEL 7
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: yes
+    security_groups:
+      - external_ssh
+    nics:
+      - port-name: dmzport1
+    meta:
+      hostname: ukbliteep01

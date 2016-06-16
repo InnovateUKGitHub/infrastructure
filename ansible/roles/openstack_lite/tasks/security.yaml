@@ -24,6 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Import the public keys in this role's "files" directory. 
+# Each file should be user_name.pub, but this splits /path/to/<filename>.pub
+# as the name of the key pair.
 - name: Import public keys
   os_keypair:
     name: "{{ item.split('/')[-1].rsplit('.')[0] }}"
@@ -57,22 +60,22 @@
     port_range_max: 1194
     remote_ip_prefix: 0.0.0.0/0
 
-- name: Create ssh security group
+- name: Create external_ssh security group
   os_security_group:
-    name=ssh
-    description="SSH traffic to and from a node"
+    name=external_ssh
+    description="SSH traffic to a node from the Internet"
 
-- name: Allow ssh (tcp:22) to/from any host
+- name: Allow ssh (tcp:22) to/from a host on the Internet
   os_security_group_rule:
-    security_group: ssh
+    security_group: external_ssh
     protocol: tcp
-    direction: "{{ item }}"
+    direction: ingress
     port_range_min: 22
     port_range_max: 22
-    remote_ip_prefix: 10.100.0.0/16
+    remote_ip_prefix: "{{ item }}"
   with_items:
-  - ingress
-  - egress
+  - 94.118.0.0/16
+  - 80.235.133.135/32
 
 - name: Create remote_repositories security group
   os_security_group:
@@ -93,7 +96,7 @@
     name=ipa_server
     description="Traffic for IPA Server nodes"
 
-- name: Allow ipa-server tcp:{{ item }} from 10.100.x.x
+- name: Allow ipa-server tcp:{{ item }} from the compartment
   os_security_group_rule:
     security_group: ipa_server
     protocol: tcp
@@ -109,7 +112,7 @@
   - 464
   - 636
 
-- name: Allow ipa_server udp:{{ item }} from 10.100.x.x
+- name: Allow ipa_server udp:{{ item }} from the compartment
   os_security_group_rule:
     security_group: ipa_server
     protocol: udp
@@ -126,6 +129,18 @@
   os_security_group:
     name=app_nodes
     description="Traffic for app enclave nodes"
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  os_security_group_rule:
+    security_group: app_nodes
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
 
 - name: Allow app_nodes all ingress from app1subnet
   os_security_group_rule:
@@ -151,6 +166,18 @@
   os_security_group:
     name=mgmt_nodes
     description="Traffic for mgmt enclave nodes"
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  os_security_group_rule:
+    security_group: mgmt_nodes
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
 
 - name: Allow mgmt_nodes all egress to anywhere
   os_security_group_rule:

@@ -24,18 +24,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Create the networks and attach subnets
-- include: networks.yaml
-
-# Create the associated security groups for subnets and services
-- include: security.yaml
-
-# Ensure the proper images are available
-- include: images.yaml
-
-# Create the ports to assign each instance to
-- include: ports.yaml
-
-# Create instances homed to specific subnets with attached security groups
-- include: instances.yaml
-
+- name: Create a port for the golden host
+  os_port:
+    state: present
+    name: dmzport1
+    network: dmz
+    fixed_ips:
+      - ip_address: 10.100.254.11
