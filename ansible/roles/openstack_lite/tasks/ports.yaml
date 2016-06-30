@@ -32,6 +32,10 @@
     network: dmz
     fixed_ips:
       - ip_address: 10.100.254.11
+    security_groups:
+      - vpn
+      - external_ssh
+      - remote_repositories
 
 # MGMT ports
 - name: Create a port for the first IPA server
@@ -41,6 +45,10 @@
     network: mgmt
     fixed_ips:
       - ip_address: 10.100.100.11
+    security_groups:
+      - mgmt_nodes
+      - ipa_server
+      - remote_repositories
 
 - name: Create a port for the second IPA server
   os_port:
@@ -49,6 +57,10 @@
     network: mgmt
     fixed_ips:
       - ip_address: 10.100.100.12
+    security_groups:
+      - mgmt_nodes
+      - ipa_server
+      - remote_repositories
 
 - name: Create a port for the mgmt Kubernetes master
   os_port:
@@ -57,6 +69,9 @@
     network: mgmt
     fixed_ips:
       - ip_address: 10.100.100.21
+    security_groups:
+      - mgmt_nodes
+      - remote_repositories
 
 # APP ports
 - name: Create a port for the Kubernetes master
@@ -66,6 +81,9 @@
     network: app
     fixed_ips:
       - ip_address: 10.100.1.11
+    security_groups:
+      - app_nodes
+      - remote_repositories
 
 - name: Create a port for a Kubernetes node
   os_port:
@@ -74,3 +92,6 @@
     network: app
     fixed_ips:
       - ip_address: 10.100.1.21
+    security_groups:
+      - app_nodes
+      - remote_repositories
