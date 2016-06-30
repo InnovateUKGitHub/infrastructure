@@ -26,16 +26,25 @@
 
 # Create the networks and attach subnets
 - include: networks.yaml
+  tags:
+    - networks
 
 # Create the associated security groups for subnets and services
 - include: security.yaml
+  tags:
+    - security
 
 # Ensure the proper images are available
 - include: images.yaml
+  tags:
+    - images
 
 # Create the ports to assign each instance to
 - include: ports.yaml
+  tags:
+    - ports
 
 # Create instances homed to specific subnets with attached security groups
 - include: instances.yaml
-
+  tags:
+    - instances
