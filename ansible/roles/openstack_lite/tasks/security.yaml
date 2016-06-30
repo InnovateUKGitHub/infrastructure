@@ -34,10 +34,20 @@
   with_fileglob:
   - roles/openstack_lite/files/*
 
-- name: Create VPN security group
+- name: Create vpn security group
   os_security_group:
     name=vpn
     description="VPN access from the Internet"
+
+- name: Remove default egress allowed from vpn group
+  os_security_group_rule:
+    state: absent
+    security_group: vpn
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
 
 - name: Allow vpn tcp:9700 ingress
   os_security_group_rule:
@@ -48,11 +58,11 @@
     remote_ip_prefix: "{{ item }}"
   with_items:
   - 193.240.0.0/16
-  - 94.118.0.0/16 
+  - 94.118.0.0/16
   - 94.119.0.0/16
   - 80.235.133.135/32
 
-- name: Allow vpn tcp:1194 egress from 0.0.0.0/0
+- name: Allow vpn tcp:1194 egress to 0.0.0.0/0
   os_security_group_rule:
     security_group: vpn
     protocol: udp
@@ -66,15 +76,25 @@
     name=external_ssh
     description="SSH traffic to a node from the Internet"
 
-- name: Allow ssh (tcp:22) to/from a host on the Internet
+- name: Remove default egress allowed from external_ssh group
+  os_security_group_rule:
+    state: absent
+    security_group: external_ssh
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow ssh (tcp:22) from a host on the Internet
   os_security_group_rule:
     security_group: external_ssh
     protocol: tcp
-    direction: ingress
     port_range_min: 22
     port_range_max: 22
     remote_ip_prefix: "{{ item }}"
   with_items:
+  - 193.240.0.0/16
   - 94.118.0.0/16
   - 80.235.133.135/32
 
@@ -83,19 +103,20 @@
     name=remote_repositories
     description="Traffic for node's access to remote_repositories"
 
-- name: Allow remote_repositories all tcp egress
-  os_security_group_rule:
-    security_group: remote_repositories
-    protocol: tcp
-    direction: egress
-    port_range_min: 1
-    port_range_max: 65535
-    remote_ip_prefix: 0.0.0.0/0
-
 - name: Create ipa_server security group
   os_security_group:
     name=ipa_server
     description="Traffic for IPA Server nodes"
+
+- name: Remove default egress allowed from ipa_server group
+  os_security_group_rule:
+    state: absent
+    security_group: ipa_server
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
 
 - name: Allow ipa-server tcp:{{ item }} from the compartment
   os_security_group_rule:
@@ -131,6 +152,16 @@
     name=app_nodes
     description="Traffic for app enclave nodes"
 
+- name: Remove default egress allowed from app group
+  os_security_group_rule:
+    state: absent
+    security_group: app_nodes
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
 - name: Allow ssh (tcp:22) to/from a host in the compartment
   os_security_group_rule:
     security_group: app_nodes
@@ -154,19 +185,20 @@
   - tcp
   - udp
 
-- name: Allow app_nodes all tcp egress to anywhere
-  os_security_group_rule:
-    security_group: app_nodes
-    protocol: tcp
-    direction: egress
-    port_range_min: 1
-    port_range_max: 65535
-    remote_ip_prefix: 0.0.0.0/24
-
 - name: Create mgmt security group
   os_security_group:
     name=mgmt_nodes
     description="Traffic for mgmt enclave nodes"
+
+- name: Remove default egress allowed from mgmt_nodes group
+  os_security_group_rule:
+    state: absent
+    security_group: mgmt_nodes
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
 
 - name: Allow ssh (tcp:22) to/from a host in the compartment
   os_security_group_rule:
@@ -179,17 +211,4 @@
   with_items:
   - ingress
   - egress
-
-- name: Allow mgmt_nodes all egress to anywhere
-  os_security_group_rule:
-    security_group: mgmt_nodes
-    protocol: "{{ item }}"
-    direction: egress
-    port_range_min: 1
-    port_range_max: 65535
-    remote_ip_prefix: 0.0.0.0/24
-  with_items:
-  - tcp
-  - udp
-
 
