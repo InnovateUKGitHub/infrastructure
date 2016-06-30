@@ -32,7 +32,8 @@
     key_name: justin_cook
     timeout: 200
     auto_ip: yes
-    security_groups:
+    security_groups: 
+      - vpn
       - external_ssh
     nics:
       - port-name: dmzport11
