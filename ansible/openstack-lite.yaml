@@ -26,4 +26,4 @@
 
 - hosts: localhost
   roles: 
-  - openstack_lite
+  - openstack-lite
