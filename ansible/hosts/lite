@@ -1,0 +1,18 @@
+[lite-ras]
+ukbliteep01.lite.bis.gov.uk ansible_host=10.100.254.11
+
+[lite-mgmt]
+ukbliteipa01.lite.bis.gov.uk ansible_host=10.100.100.11
+ukbliteipa02.lite.bis.gov.uk ansible_host=10.100.100.12
+
+[lite-mgmt-k8s]
+
+[lite-app-k8s]
+
+[lite:children]
+lite-ras
+lite-mgmt
+lite-mgmt-k8s
+lite-app-k8s
+
+[lite:vars]
