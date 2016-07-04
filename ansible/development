@@ -1,8 +1,0 @@
-# This is the development ansible 'hosts' file.
-
-# Get port: `vagrant ssh-config k8smaster`
-[development]
-k8smaster ansible_ssh_host=127.0.0.1 ansible_ssh_port=2200
-
-[searchproto1]
-searchproto-1.lite.bis.gov.uk
