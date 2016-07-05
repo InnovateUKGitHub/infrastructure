@@ -47,8 +47,8 @@
     cidr: 10.100.254.0/24
     gateway_ip: 10.100.254.1
     dns_nameservers:
-    - 10.100.100.11
-    - 10.100.100.12
+    - 8.8.8.8
+    - 8.8.4.4
 
 - name: Create app1subnet subnet 
   os_subnet:
@@ -67,8 +67,8 @@
     cidr: 10.100.100.0/24
     gateway_ip: 10.100.100.1
     dns_nameservers:
-    - 10.100.100.11
-    - 10.100.100.12
+    - 8.8.8.8
+    - 8.8.4.4
 
 - name: Create svc1subnet
   os_subnet:
