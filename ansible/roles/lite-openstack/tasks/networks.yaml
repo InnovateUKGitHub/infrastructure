@@ -49,6 +49,7 @@
     dns_nameservers:
     - 8.8.8.8
     - 8.8.4.4
+  ignore_errors: yes
 
 - name: Create app1subnet subnet 
   os_subnet:
@@ -69,6 +70,7 @@
     dns_nameservers:
     - 8.8.8.8
     - 8.8.4.4
+  ignore_errors: yes
 
 - name: Create svc1subnet
   os_subnet:
