@@ -33,3 +33,4 @@
 - name: Update all software
   yum: name=* state=latest
   become: true
+  notify: Restart the node

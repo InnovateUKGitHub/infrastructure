@@ -25,15 +25,23 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - hosts: lite
-
-  vars_prompt:
+  vars_prompt: 
     - name: "redhat_username"
       prompt: "Enter RedHat username"
       private: no
     - name: "redhat_password"
       prompt: "Enter RedHat password"
       private: yes
-
   roles: 
     - common
-#   - ipaserver
+
+- hosts: lite-mgmt-ipa
+  vars_prompt:
+    - name: "ipaserver_admin_password"
+      prompt: "Enter IPA server admin password"
+      private: yes
+    - name: "ipaserver_dir_mgmt_password"
+      prompt: "Enter IPA server directory manager password"
+      private: yes
+  roles:
+    - ipaserver

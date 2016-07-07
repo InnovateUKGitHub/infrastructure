@@ -1,1 +1,12 @@
-ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.196.222"'
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.196.220"'
+golden_host: '51.179.196.220'
+
+# The reverse zones are commented out as there is a bug affecting 4.2.0 in RHEL
+# repo. The plays are manually added to compensate for this.
+ipa_reverse_zones:
+#  - 254.100.10.in-addr.arpa.
+  - 100.100.10.in-addr.arpa.
+#  - 1.100.10.in-addr.arpa.
+#  - 20.100.10.in-addr.arpa.
+
+ipaserver_keytab: /root/lite.keytab
