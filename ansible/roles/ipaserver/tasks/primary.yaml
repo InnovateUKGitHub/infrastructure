@@ -1,0 +1,101 @@
+---
+# Copyright (c) 2016, Department for Business, Innovation and Skills
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- name: Install the primary IPA server
+  action: command
+    {{ ipaserver_base_command }}
+    --realm {{ ipaserver_realm }}
+    --domain {{ ipaserver_domain }}
+    -a {{ ipaserver_admin_password }}
+    -p {{ ipaserver_dir_mgmt_password }}
+    --hostname={{ inventory_hostname }}
+    --ip-address={{ hostvars[inventory_hostname]['ansible_host'] }}
+    {{ '--idstart=%s' % ipaserver_idstart if ipaserver_idstart | default(False) else '' }}
+    {{ '--idmax=%s' % ipaserver_idmax if ipaserver_idmax | default(False) else '' }}
+    {{ '--forwarder=%s' % ipaserver_dns_forwarder
+       if ipaserver_dns_forwarder | default(False) else '--no-forwarders' }}
+    {{ '--mkhomedir' if ipaserver_mkhomedir | default(True) else '' }}
+    {{ '--setup-dns' if ipaserver_setup_dns | default(True) else '' }}
+    {{ '--no-host-dns' if ipaserver_host_dns | default(True) else '' }}
+    {{ '--ssh-trust-dns' if ipaserver_ssh_trust_dns | default(True) else '' }}
+    {% for zone in ipa_reverse_zones %}
+    {{ '--reverse-zone=%s' % zone }}
+    {% endfor %}
+    {{ '' if ipaserver_hbac_allow | default(True) else '--no_hbac_allow' }}
+    {{ '' if ipaserver_setup_ntp | default(True) else '--no-ntp' }}
+    {{ '' if ipaserver_configure_ssh | default(True) else '--no-ssh' }}
+    {{ '' if ipaserver_configure_sshd | default(True) else '--no-sshd' }}
+    {{ '' if ipaserver_ui_redirect | default(True) else '--no-ui-redirect' }}
+    {{ '--log-file=/tmp/ipaserver_installer.log' }}
+    creates=/etc/ipa/default.conf
+
+- name: Create a keytab file
+  shell:
+    echo {{ ipaserver_admin_password }} | kinit admin@{{ ipaserver_realm }} ;
+    ipa-getkeytab -s {{ inventory_hostname }} -p admin@{{ ipaserver_realm }} -k 
+      {{ ipaserver_keytab }}
+  args:
+    executable: /bin/bash
+    creates: "{{ ipaserver_keytab }}"
+
+# This shall be removed once > 4.2.1 becomes available.
+# https://fedorahosted.org/freeipa/ticket/4561
+#- name: Insert reverse zones
+#  shell:
+#    kinit admin -k -t {{ ipaserver_keytab }} ;
+#    ipa dnszone-add 20.100.10.in-addr.arpa. --name-server={{ inventory_hostname }}.
+
+- name: Create DNS entries for replicas
+  shell:
+    kinit admin -k -t {{ ipaserver_keytab }} ;
+    hname={{ item }} ;
+    ip_addr={{ hostvars[item]['ansible_host'] }} ;
+    ipa dnsrecord-add lite.bis.gov.uk ${hname%%.*} --a-rec $ip_addr >> 
+      /root/ipa_replicas.log ;
+    ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
+      /root/ipa_replicas.log ;
+    ipa-replica-prepare -p {{ ipaserver_dir_mgmt_password }} --no-wait-for-dns 
+      --log-file=/root/ipa_replicas.log ${hname}
+  args:
+    executable: /bin/bash
+    creates: /root/ipa_replicas.log
+  with_items:
+    - "{{ groups['lite-mgmt-ipa'] }}"
+  when: hostvars[item]['iparole'] == "replica"
+
+- name: Fetch files from primary ipa server
+  fetch: src={{ item }} dest=/tmp/{{ item }}
+  with_items:
+    - '/root/cacert.p12'
+    - '/root/ca-agent.p12'
+    - "{{ ipaserver_keytab }}"
+
+- name: Fetch generated replica prepared files from master
+  fetch: src=/var/lib/ipa/replica-info-{{ item }}.gpg
+         dest=/tmp/replica-info-{{ item }}.gpg flat=yes
+  with_items:
+    - "{{ groups['lite-mgmt-ipa'] }}"
+  when: hostvars[item]['iparole'] == "replica"
