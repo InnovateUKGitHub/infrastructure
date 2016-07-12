@@ -1,0 +1,57 @@
+---
+# Copyright (c) 2016, Department for Business, Innovation and Skills
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- hosts: all
+  tasks:
+  - name: Detecting Operating System
+    stat:
+      path: /run/ostree-booted
+    register: ostree_booted
+  - set_fact:
+      l_is_atomic: "{{ ostree_booted.stat.exists }}"
+  - set_fact:
+      l_is_containerized: "{{ (l_is_atomic | bool) or (containerized | default(false) | bool) }}"
+  - name: Enable rhel 7 server extras rpms
+    action: command subscription-manager repos --enable=rhel-7-server-extras-rpms
+    when: not l_is_atomic | bool
+    become: yes
+
+- include: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
+  vars:
+    g_etcd_hosts:   "{{ groups.etcd | default([]) }}"
+    g_lb_hosts:     "{{ groups.lb | default([]) }}"
+    g_master_hosts: "{{ groups.masters | default([]) }}"
+    g_new_master_hosts: "{{ groups.new_masters | default([]) }}"
+    g_node_hosts:   "{{ groups.nodes | default([]) }}"
+    g_new_node_hosts: "{{ groups.new_nodes | default([]) }}"
+    g_nfs_hosts:   "{{ groups.nfs | default([]) }}"
+    g_all_hosts:    "{{ g_master_hosts | union(g_node_hosts) | union(g_etcd_hosts)
+                        | union(g_lb_hosts) | union(g_nfs_hosts)
+                        | union(g_new_node_hosts)| union(g_new_master_hosts)
+                        | default([]) }}"
+    openshift_cluster_id: "{{ cluster_id | default('default') }}"
+    openshift_debug_level: "{{ debug_level | default(2) }}"
+    openshift_deployment_type: "{{ deployment_type }}"
