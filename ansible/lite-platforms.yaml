@@ -24,24 +24,103 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- hosts: lite
-  vars_prompt: 
-    - name: "redhat_username"
-      prompt: "Enter RedHat username"
-      private: no
-    - name: "redhat_password"
-      prompt: "Enter RedHat password"
-      private: yes
-  roles: 
-    - common
+#- hosts: all
+#  vars_prompt: 
+#    - name: "redhat_username"
+#      prompt: "Enter RedHat username"
+#      private: no
+#    - name: "redhat_password"
+#      prompt: "Enter RedHat password"
+#      private: yes
+#  roles: 
+#    - common
+
+#- hosts: lite-mgmt-ipa
+#  vars_prompt:
+#    - name: "ipaserver_admin_password"
+#      prompt: "Enter IPA server admin password"
+#      private: yes
+#    - name: "ipaserver_dir_mgmt_password"
+#      prompt: "Enter IPA server directory manager password"
+#      private: yes
+#  roles:
+#    - ipaserver
+#  become: yes
 
 - hosts: lite-mgmt-ipa
-  vars_prompt:
-    - name: "ipaserver_admin_password"
-      prompt: "Enter IPA server admin password"
-      private: yes
-    - name: "ipaserver_dir_mgmt_password"
-      prompt: "Enter IPA server directory manager password"
-      private: yes
-  roles:
-    - ipaserver
+  tasks:
+  - name: Create DNS entries for mgmt OpenShift nodes
+    shell:
+      kinit admin -k -t {{ ipaserver_keytab }} ;
+      hname={{ item }} ;
+      ip_addr={{ hostvars[item]['ansible_host'] }} ;
+      ipa dnsrecord-add lite.bis.gov.uk ${hname%%.*} --a-rec $ip_addr >>
+        /root/ipa_mgmt_hosts.log ;
+      ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
+        /root/ipa_mgmt_hosts.log ;
+    args:
+      executable: /bin/bash
+      creates: /root/ipa_mgmt_hosts.log
+    with_items:
+      - "{{ groups['lite-mgmt-openshift'] }}"
+    when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
+    become: yes
+  - name: Create DNS entries for app OpenShift nodes
+    shell:
+      kinit admin -k -t {{ ipaserver_keytab }} ;
+      hname={{ item }} ;
+      ip_addr={{ hostvars[item]['ansible_host'] }} ;
+      ipa dnsrecord-add lite.bis.gov.uk ${hname%%.*} --a-rec $ip_addr >>
+        /root/ipa_app_hosts.log ;
+      ipa dnsrecord-add 1.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
+        /root/ipa_app_hosts.log ;
+    args:
+      executable: /bin/bash
+      creates: /root/ipa_app_hosts.log
+    with_items:
+      - "{{ groups['lite-app-openshift'] }}"
+    when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
+    become: yes
+
+- hosts: lite-ras
+  remote_user: cloud-user
+  tasks:
+  - name: Manually update /etc/hosts to use internal DNS
+    copy:
+      src=files/resolv.conf dest=/etc/resolv.conf
+    become: true
+
+- hosts: localhost
+  tasks:
+  - name: Change the dmz network DHCP to provide internal DNS
+    os_subnet:
+      name: dmz1subnet
+      network_name: dmz
+      cidr: 10.100.254.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the mgmt network DHCP to provide internal DNS
+    os_subnet:
+      name: mgmt1subnet
+      network_name: mgmt
+      cidr: 10.100.100.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the app network DHCP to provide internal DNS
+    os_subnet:
+      name: app1subnet
+      network_name: app
+      cidr: 10.100.1.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the svc network DHCP to provide internal DNS
+    os_subnet:
+      name: svc1subnet
+      network_name: svc
+      cidr: 10.100.20.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
