@@ -38,21 +38,16 @@
 - name: Install haveged
   yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
        state=present
-  become: true
 
 - name: Start haveged
   service: name=haveged state=started
-  become: true
 
 - name: Install IPA server software
   yum: name={{ item }} state=present
   with_items: "{{ ipaserver_packages }}"
-  become: true
 
 - include: primary.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  become: true
 
 - include: replica.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-  become: true
