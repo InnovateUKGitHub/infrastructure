@@ -1,0 +1,18 @@
+[OSEv3:children]
+masters
+nodes
+
+[OSEv3:vars]
+ansible_ssh_user=cloud-user
+ansible_sudo=true
+deployment_type=origin
+containerized=true
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+[masters]
+ukblitemom01.lite.bis.gov.uk ansible_host=10.100.100.21
+
+[nodes]
+ukblitemom01.lite.bis.gov.uk ansible_host=10.100.100.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukblitemon01.lite.bis.gov.uk ansible_host=10.100.100.22 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ukblitemon02.lite.bis.gov.uk ansible_host=10.100.100.23 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
