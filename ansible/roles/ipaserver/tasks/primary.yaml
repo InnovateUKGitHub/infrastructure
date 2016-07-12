@@ -41,9 +41,6 @@
     {{ '--setup-dns' if ipaserver_setup_dns | default(True) else '' }}
     {{ '--no-host-dns' if ipaserver_host_dns | default(True) else '' }}
     {{ '--ssh-trust-dns' if ipaserver_ssh_trust_dns | default(True) else '' }}
-    {% for zone in ipa_reverse_zones %}
-    {{ '--reverse-zone=%s' % zone }}
-    {% endfor %}
     {{ '' if ipaserver_hbac_allow | default(True) else '--no_hbac_allow' }}
     {{ '' if ipaserver_setup_ntp | default(True) else '--no-ntp' }}
     {{ '' if ipaserver_configure_ssh | default(True) else '--no-ssh' }}
@@ -63,10 +60,12 @@
 
 # This shall be removed once > 4.2.1 becomes available.
 # https://fedorahosted.org/freeipa/ticket/4561
-#- name: Insert reverse zones
-#  shell:
-#    kinit admin -k -t {{ ipaserver_keytab }} ;
-#    ipa dnszone-add 20.100.10.in-addr.arpa. --name-server={{ inventory_hostname }}.
+- name: Insert reverse zones
+  shell:
+    kinit admin -k -t {{ ipaserver_keytab }} ;
+    ipa dnszone-add {{ item }}
+  with_items:
+    - "{{ ipa_reverse_zones }}"
 
 - name: Create DNS entries for replicas
   shell:
