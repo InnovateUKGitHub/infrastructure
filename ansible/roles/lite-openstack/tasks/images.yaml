@@ -24,3 +24,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+- name: Upload RHEL7 Atomic
+  os_image:
+    name: RHEL7 Atomic
+    container_format: bare
+    disk_format: qcow2
+    filename: rhel-atomic-cloud-7.2.5.x86_64.qcow2
+    properties:
+      cpu_arch: x86_64
+      distro: RHEL7
