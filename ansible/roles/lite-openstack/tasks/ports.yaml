@@ -62,7 +62,7 @@
       - ipa_server
       - remote_repositories
 
-- name: Create a port for the mgmt Kubernetes master
+- name: Create a port for the mgmt OpenShift master
   os_port:
     state: present
     name: mgmtport21
@@ -72,20 +72,23 @@
     security_groups:
       - mgmt_nodes
       - remote_repositories
+      - mgmt_openshift_master
 
-# APP ports
-- name: Create a port for the Kubernetes master
+- name: Create ports for the mgmt OpenShift nodes
   os_port:
     state: present
-    name: appport11
-    network: app
+    name: mgmtport2{{ item }}
+    network: mgmt
     fixed_ips:
-      - ip_address: 10.100.1.11
+      - ip_address: 10.100.100.2{{ item }}
     security_groups:
-      - app_nodes
+      - mgmt_nodes
       - remote_repositories
+      - mgmt_openshift_node
+  with_sequence: start=2 count=2
 
-- name: Create a port for a Kubernetes node
+# APP ports
+- name: Create a port for the app OpenShift master
   os_port:
     state: present
     name: appport21
@@ -95,3 +98,17 @@
     security_groups:
       - app_nodes
       - remote_repositories
+      - app_openshift_master
+
+- name: Create a port for the app OpenShift nodes
+  os_port:
+    state: present
+    name: appport2{{ item }}
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.2{{item }}
+    security_groups:
+      - app_nodes
+      - remote_repositories
+      - app_openshift_node
+  with_sequence: start=2 count=2
