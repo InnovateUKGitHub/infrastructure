@@ -59,3 +59,37 @@
   with_items:
     - { name: 'ukbliteipa01', count: 1 }
     - { name: 'ukbliteipa02', count: 2 }
+
+- name: Create management OpenShift instances
+  os_server:
+    name: "{{ item.name }}"
+    image: RHEL 7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: mgmtport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukblitemom01', count: 1 }
+    - { name: 'ukblitemon01', count: 2 }
+    - { name: 'ukblitemon02', count: 3 }
+
+- name: Create app OpenShift instances
+  os_server:
+    name: "{{ item.name }}"
+    image: RHEL 7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbliteaom01', count: 1 }
+    - { name: 'ukbliteaon01', count: 2 }
+    - { name: 'ukbliteaon02', count: 3 }
