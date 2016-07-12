@@ -85,7 +85,7 @@
 - hosts: lite-ras:lite-mgmt-openshift:lite-app-openshift
   remote_user: cloud-user
   tasks:
-  - name: Manually update /etc/hosts to use internal DNS
+  - name: Manually update /etc/resolv.conf to use internal DNS
     copy:
       src=files/resolv.conf dest=/etc/resolv.conf
     become: true
