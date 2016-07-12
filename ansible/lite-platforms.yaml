@@ -82,7 +82,7 @@
     when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
     become: yes
 
-- hosts: lite-ras
+- hosts: lite-ras:lite-mgmt-openshift:lite-app-openshift
   remote_user: cloud-user
   tasks:
   - name: Manually update /etc/hosts to use internal DNS
