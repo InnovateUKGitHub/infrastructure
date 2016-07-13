@@ -15,7 +15,7 @@ infrastructure, and those are:
 Each project has its own implementations in the technology and is documented
 accordingly. Please refer to the documentation embedded herein. 
 
-The platform of choice is CentOS7. 
+The platform of choice is RHEL7. 
 
 ## vagrant
 
