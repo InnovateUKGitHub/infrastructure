@@ -36,6 +36,27 @@ out the `https://github.com/openshift/openshift-ansible` repo alongside this
 repo. The path in the `ansible.cfg` file included in this directory assumes
 they are checked out in the `~/repo/` directory.
 
+After you have checked out openshift-ansible.git, the following patch is
+necessary for a successful run if you are not using a regular install:
+
+```
+$ git diff roles/openshift_facts/library/openshift_facts.py
+diff --git a/roles/openshift_facts/library/openshift_facts.py b/roles/openshift_facts/library/openshift_facts.py
+index 31e7096..eeaed0d 100755
+--- a/roles/openshift_facts/library/openshift_facts.py
++++ b/roles/openshift_facts/library/openshift_facts.py
+@@ -2108,7 +2108,8 @@ def main():
+     openshift_env_structures = module.params['openshift_env_structures']
+     protected_facts_to_overwrite = module.params['protected_facts_to_overwrite']
+
+-    fact_file = '/etc/ansible/facts.d/openshift.fact'
++    #fact_file = '/etc/ansible/facts.d/openshift.fact'
++    fact_file = os.getcwd() + '/openshift.fact'
+
+     openshift_facts = OpenShiftFacts(role,
+                                      fact_file,
+```
+
 `$ ansible-playbook -i hosts/lite-mgmt_openshift lite-openshift.yaml`
 
 After the above command, there will be a three-node cluster running in the
