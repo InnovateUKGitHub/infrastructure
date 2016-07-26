@@ -60,6 +60,7 @@
     dns_nameservers:
     - 8.8.8.8
     - 8.8.4.4
+  ignore_errors: yes
 
 - name: Create mgmt1subnet
   os_subnet:
@@ -81,6 +82,7 @@
     dns_nameservers:
     - 8.8.8.8
     - 8.8.4.4
+  ignore_errors: yes
 
 - name: Create WAN Gateway router
   os_router:
