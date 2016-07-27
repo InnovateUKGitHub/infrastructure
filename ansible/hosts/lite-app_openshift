@@ -3,6 +3,7 @@ masters
 nodes
 
 [OSEv3:vars]
+openshift_release=1.2.1
 ansible_ssh_user=cloud-user
 ansible_sudo=true
 deployment_type=origin
