@@ -99,3 +99,9 @@
     command: /usr/local/bin/oadm manage-node {{ ansible_host }} --schedulable=true
     when: "'masters' in group_names"
     become: yes
+  - name: Set correct URL in master-config.yaml
+    command: >
+      sed -ie 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
+      /etc/origin/master/master-config.yaml
+    when: "'masters' in group_names"
+    become: yes
