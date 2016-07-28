@@ -263,9 +263,12 @@
   os_security_group_rule:
     security_group: mgmt_openshift_master
     protocol: tcp
-    port_range_min: 8443
-    port_range_max: 8443
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
     remote_ip_prefix: 0.0.0.0/0
+  with_items:
+  - 8443
+  - 9090
 
 - name: Allow specific tcp to OpenShift master from the mgmt compartment
   os_security_group_rule:
@@ -278,7 +281,6 @@
   - 2379
   - 4194
   - 8080
-  - 9090
   - 10250
   - 10255
   - 33818
@@ -397,9 +399,12 @@
   os_security_group_rule:
     security_group: app_openshift_master
     protocol: tcp
-    port_range_min: 8443
-    port_range_max: 8443
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
     remote_ip_prefix: 0.0.0.0/0
+  with_items:
+  - 8443
+  - 9090
 
 - name: Allow specific tcp ports to OpenShift master from the app compartment
   os_security_group_rule:
@@ -412,7 +417,6 @@
   - 2379
   - 4194
   - 8080
-  - 9090
   - 10250
   - 10255
   - 33818
