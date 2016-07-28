@@ -96,6 +96,6 @@
     shell: iptables-save > /etc/sysconfig/iptables
     become: yes
   - name: Set the master schedulable
-    command: oadm manage-node 10.100.100.21 --schedulable=true
-    when: "'master' in group_names"
+    command: /usr/local/bin/oadm manage-node {{ ansible_host }} --schedulable=true
+    when: "'masters' in group_names"
     become: yes
