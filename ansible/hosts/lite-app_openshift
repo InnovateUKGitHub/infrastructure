@@ -3,12 +3,11 @@ masters
 nodes
 
 [OSEv3:vars]
-openshift_release=1.2.1
 ansible_ssh_user=cloud-user
 ansible_sudo=true
-deployment_type=origin
+deployment_type=openshift-enterprise
 containerized=true
-#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
 ukbliteaom01.lite.bis.gov.uk ansible_host=10.100.1.21
