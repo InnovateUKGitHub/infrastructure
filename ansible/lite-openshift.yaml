@@ -37,23 +37,21 @@
   - name: Enable rhel 7 server extras rpms
     action: command subscription-manager repos --enable=rhel-7-server-extras-rpms
     when: not l_is_atomic | bool
-    become: yes
+  - name: Install httpd-tools
+    yum: name=httpd-tools state=latest
+    when: not l_is_atomic | bool
   - name: Install Cockpit
     yum: name=cockpit state=latest
     when: not l_is_atomic | bool
-    become: yes
   - name: Start Cockpit
     service: name=cockpit state=started enabled=yes
-    become: yes
   - name: Create root ssh key on master
     command: ssh-keygen -f /root/.ssh/id_rsa -N '' creates=/root/.ssh/id_rsa
     when: inventory_hostname == groups['masters'][0]
-    become: yes
   - name: Copy master root public key
     command: cat /root/.ssh/id_rsa.pub
     register: copy_master
     when: inventory_hostname == groups['masters'][0]
-    become: yes
   - name: Register master root public key
     set_fact:
       root_pub_key: "{{ copy_master.stdout }}"
@@ -61,12 +59,10 @@
   - name: Check authorized_keys
     command: cat /root/.ssh/authorized_keys
     register: authorized_keys
-    become: yes
   - name: Authorize master root public key
     shell: >
       echo "{{ hostvars[groups['masters'][0]]['root_pub_key'] }}" >> /root/.ssh/authorized_keys
     when: authorized_keys.stdout.find("{{ hostvars[groups['masters'][0]]['root_pub_key'] }}") == -1
-    become: yes
 
 - include: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
   vars:
@@ -91,17 +87,19 @@
     command: >
       iptables -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport
       9090 -j ACCEPT
-    become: yes
   - name: Save iptables rules
     shell: iptables-save > /etc/sysconfig/iptables
-    become: yes
   - name: Set the master schedulable
     command: /usr/local/bin/oadm manage-node {{ ansible_host }} --schedulable=true
     when: "'masters' in group_names"
-    become: yes
   - name: Set correct URL in master-config.yaml
     command: >
       sed -ie 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
       /etc/origin/master/master-config.yaml
     when: "'masters' in group_names"
-    become: yes
+  - name: Restart atomic-openshift-master
+    service: name=atomic-openshift-master state=restarted enabled=yes
+    when: "'masters' in group_names"
+  - name: Create user admin
+    command: htpasswd -b /etc/origin/master/htpasswd admin admin
+    when: "'masters' in group_names"
