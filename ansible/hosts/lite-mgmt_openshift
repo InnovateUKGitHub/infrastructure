@@ -8,6 +8,7 @@ ansible_become=true
 ansible_sudo=true
 deployment_type=openshift-enterprise
 containerized=true
+openshift_master_default_subdomain=mgmt.lite.bis.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
