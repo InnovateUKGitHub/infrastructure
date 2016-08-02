@@ -285,6 +285,17 @@
   - 10255
   - 33818
 
+- name: Allow DNS tcp and udp to OpenShift master from the mgmt compartment
+  os_security_group_rule:
+    security_group: mgmt_openshift_master
+    protocol: "{{ item }}"
+    port_range_min: 8053
+    port_range_max: 8053
+    remote_ip_prefix: 10.100.100.0/24
+  with_items:
+  - tcp
+  - udp
+
 #- name: Create mgmt Kubernetes node group
 #  os_security_group:
 #    name=mgmt_k8s_node
@@ -420,6 +431,17 @@
   - 10250
   - 10255
   - 33818
+
+- name: Allow DNS tcp and udp to OpenShift master from the app comparment
+  os_security_group_rule:
+    security_group: app_openshift_master
+    protocol: "{{ item }}"
+    port_range_min: 8053
+    port_range_max: 8053
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - tcp
+  - udp
 
 #- name: Create app Kubernetes node group
 #  os_security_group:
