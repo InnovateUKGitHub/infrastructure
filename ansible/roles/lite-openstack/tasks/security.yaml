@@ -34,6 +34,8 @@
   with_fileglob:
   - roles/openstack_lite/files/*
 
+##### VPN Servers #####
+
 - name: Create vpn security group
   os_security_group:
     name=vpn
@@ -71,6 +73,8 @@
     port_range_max: 1194
     remote_ip_prefix: 0.0.0.0/0
 
+##### External SSH #####
+
 - name: Create external_ssh security group
   os_security_group:
     name=external_ssh
@@ -98,10 +102,14 @@
   - 94.118.0.0/16
   - 80.235.133.135/32
 
+##### Remote Repositories #####
+
 - name: Create remote_repositories security group
   os_security_group:
     name=remote_repositories
     description="Traffic for node's access to remote_repositories"
+
+##### IPA Servers #####
 
 - name: Create ipa_server security group
   os_security_group:
@@ -147,6 +155,8 @@
   - 123
   - 464
 
+##### App Nodes #####
+
 - name: Create app_nodes security group
   os_security_group:
     name=app_nodes
@@ -185,6 +195,8 @@
   - tcp
   - udp
 
+##### Mgmt Nodes #####
+
 - name: Create mgmt security group
   os_security_group:
     name=mgmt_nodes
@@ -212,37 +224,7 @@
   - ingress
   - egress
 
-#- name: Create mgmt Kubernetes master group
-#  os_security_group:
-#    name=mgmt_k8s_master
-#    description="Traffic for mgmt enclave Kubernetes master"
-
-#- name: Remove default egress allowed from mgmt_k8s_master group
-#  os_security_group_rule:
-#    state: absent
-#    security_group: mgmt_k8s_master
-#    ethertype: "{{ item }}"
-#    direction: egress
-#  with_items:
-#  - IPv4
-#  - IPv6
-
-#- name: Allow tcp:{{ item }} to Kubernetes master from the mgmt compartment
-#  os_security_group_rule:
-#    security_group: mgmt_k8s_master
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.100.0/24
-#  with_items:
-#  - 2379
-#  - 4194
-#  - 6443
-#  - 8080
-#  - 9090
-#  - 10250
-#  - 10255
-#  - 33818
+##### Openshift Mgmt Master #####
 
 - name: Create mgmt OpenShift master group
   os_security_group:
@@ -305,36 +287,7 @@
   - [ 'tcp', 'udp' ]
   - [ 8053, 24224 ]
 
-#- name: Create mgmt Kubernetes node group
-#  os_security_group:
-#    name=mgmt_k8s_node
-#    description="Traffic for mgmt enclave Kubernetes node"
-
-#- name: Remove default egress allowed from mgmt_k8s_node group
-#  os_security_group_rule:
-#    state: absent
-#    security_group: mgmt_k8s_node
-#    ethertype: "{{ item }}"
-#    direction: egress
-#  with_items:
-#  - IPv4
-#  - IPv6
-
-#- name: Allow tcp:{{ item }} to Kubernetes node from the mgmt compartment
-#  os_security_group_rule:
-#    security_group: mgmt_k8s_node
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.100.0/24
-#  with_items:
-#  - 4194
-#  - 8080
-#  - 10250
-#  - 10255
-#  - 38301
-#  - 38419
-#  - 51799
+##### Openshift Mgmt Node #####
 
 - name: Create mgmt OpenShift node group
   os_security_group:
@@ -371,38 +324,7 @@
   with_items:
   - 4789
 
-#- name: Create app Kubernetes master group
-#  os_security_group:
-#    name=app_k8s_master
-#    description="Traffic for app enclave Kubernetes master"
-
-#- name: Remove default egress allowed from app_k8s_master group
-#  os_security_group_rule:
-#    state: absent
-#    security_group: app_k8s_master
-#    ethertype: "{{ item }}"
-#    direction: egress
-#  with_items:
-#  - IPv4
-#  - IPv6
-
-#- name: Allow tcp:{{ item }} to Kubernetes master from the app compartment
-#  os_security_group_rule:
-#    security_group: app_k8s_master
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.1.0/24
-#  with_items:
-#  - 2379
-#  - 4194
-#  - 6443
-#  - 8080
-#  - 9090
-#  - 10250
-#  - 10255
-#  - 338188s_master
-#    description="Traffic for app enclave Kubernetes master"
+##### Openshift App Master #####
 
 - name: Create app OpenShift master group
   os_security_group:
@@ -470,36 +392,7 @@
   - [ 'tcp', 'udp' ]
   - [ 8053, 24224 ]
 
-#- name: Create app Kubernetes node group
-#  os_security_group:
-#    name=app_k8s_node
-#    description="Traffic for app enclave Kubernetes node"
-
-#- name: Remove default egress allowed from app_k8s_node group
-#  os_security_group_rule:
-#    state: absent
-#    security_group: app_k8s_node
-#    ethertype: "{{ item }}"
-#    direction: egress
-#  with_items:
-#  - IPv4
-#  - IPv6
-
-#- name: Allow tcp:{{ item }} to Kubernetes node from the app compartment
-#  os_security_group_rule:
-#    security_group: app_k8s_node
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.1.0/24
-#  with_items:
-#  - 4194
-#  - 8080
-#  - 10250
-#  - 10255
-#  - 38301
-#  - 38419
-#  - 51799
+##### Openshift App Node #####
 
 - name: Create app OpenShift node group
   os_security_group:
