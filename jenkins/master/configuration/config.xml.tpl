@@ -59,3 +59,4 @@
   </crumbIssuer>
   <nodeProperties/>
   <globalNodeProperties/>
+</hudson>
