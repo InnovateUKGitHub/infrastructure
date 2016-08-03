@@ -259,7 +259,7 @@
   - IPv4
   - IPv6
 
-- name: Allow remote access to mgmt OpenShift master:8443 from anywhere
+- name: Allow remote access to mgmt OpenShift master:tcp ports from anywhere
   os_security_group_rule:
     security_group: mgmt_openshift_master
     protocol: tcp
@@ -267,6 +267,7 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 0.0.0.0/0
   with_items:
+  - 80
   - 8443
   - 9090
 
@@ -282,19 +283,27 @@
   - 4194
   - 8080
   - 10250
-  - 10255
-  - 33818
+
+- name: Allow specific udp to OpenShift master from the mgmt compartment
+  os_security_group_rule:
+    security_group: mgmt_openshift_master
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.100.0/24
+  with_items:
+  - 4789
 
 - name: Allow DNS tcp and udp to OpenShift master from the mgmt compartment
   os_security_group_rule:
     security_group: mgmt_openshift_master
-    protocol: "{{ item }}"
-    port_range_min: 8053
-    port_range_max: 8053
+    protocol: "{{ item[0] }}"
+    port_range_min: "{{ item[1] | int }}"
+    port_range_max: "{{ item[1] | int }}"
     remote_ip_prefix: 10.100.100.0/24
-  with_items:
-  - tcp
-  - udp
+  with_nested:
+  - [ 'tcp', 'udp' ]
+  - [ 8053, 24224 ]
 
 #- name: Create mgmt Kubernetes node group
 #  os_security_group:
@@ -350,13 +359,17 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 10.100.100.0/24
   with_items:
-  - 4194
-  - 8080
   - 10250
-  - 10255
-  - 38301
-  - 38419
-  - 51799
+
+- name: Allow specific udp ports to OpenShift node from the mgmt compartment
+  os_security_group_rule:
+    security_group: mgmt_openshift_node
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.100.0/24
+  with_items:
+  - 4789
 
 #- name: Create app Kubernetes master group
 #  os_security_group:
@@ -406,7 +419,7 @@
   - IPv4
   - IPv6
 
-- name: Allow remote access to app OpenShift master:8443 from anywhere
+- name: Allow remote access to app OpenShift master:tcp ports from anywhere
   os_security_group_rule:
     security_group: app_openshift_master
     protocol: tcp
@@ -414,10 +427,11 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 0.0.0.0/0
   with_items:
+  - 80
   - 8443
   - 9090
 
-- name: Allow specific tcp ports to OpenShift master from the app compartment
+- name: Allow specific tcp to OpenShift master from the app compartment
   os_security_group_rule:
     security_group: app_openshift_master
     protocol: tcp
@@ -429,19 +443,32 @@
   - 4194
   - 8080
   - 10250
-  - 10255
-  - 33818
 
-- name: Allow DNS tcp and udp to OpenShift master from the app comparment
+#- name: Allow specific tcp ports to OpenShift master from the app compartment
+#  os_security_group_rule:
+#    security_group: app_openshift_master
+#    protocol: tcp
+#    port_range_min: "{{ item }}"
+#    port_range_max: "{{ item }}"
+#    remote_ip_prefix: 10.100.1.0/24
+#  with_items:
+#  - 2379
+#  - 4194
+#  - 8080
+#  - 10250
+#  - 10255
+#  - 33818
+
+- name: Allow specific tcp and udp to OpenShift master from the app compartment
   os_security_group_rule:
     security_group: app_openshift_master
-    protocol: "{{ item }}"
-    port_range_min: 8053
-    port_range_max: 8053
+    protocol: "{{ item[0] }}"
+    port_range_min: "{{ item[1] | int }}"
+    port_range_max: "{{ item[1] | int }}"
     remote_ip_prefix: 10.100.1.0/24
-  with_items:
-  - tcp
-  - udp
+  with_nested:
+  - [ 'tcp', 'udp' ]
+  - [ 8053, 24224 ]
 
 #- name: Create app Kubernetes node group
 #  os_security_group:
@@ -489,6 +516,22 @@
   - IPv4
   - IPv6
 
+#- name: Allow specific tcp ports to OpenShift node from the app compartment
+#  os_security_group_rule:
+#    security_group: app_openshift_node
+#    protocol: tcp
+#    port_range_min: "{{ item }}"
+#    port_range_max: "{{ item }}"
+#    remote_ip_prefix: 10.100.1.0/24
+#  with_items:
+#  - 4194
+#  - 8080
+#  - 10250
+#  - 10255
+#  - 38301
+#  - 38419
+#  - 51799
+
 - name: Allow specific tcp ports to OpenShift node from the app compartment
   os_security_group_rule:
     security_group: app_openshift_node
@@ -497,10 +540,14 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 10.100.1.0/24
   with_items:
-  - 4194
-  - 8080
   - 10250
-  - 10255
-  - 38301
-  - 38419
-  - 51799
+
+- name: Allow specific udp ports to OpenShift node from the app compartment
+  os_security_group_rule:
+    security_group: app_openshift_node
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 4789
