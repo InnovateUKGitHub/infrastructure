@@ -100,7 +100,7 @@ objects:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: jenkins:2
+          name: jenkins:1
           namespace: openshift
       type: Source
     triggers:
