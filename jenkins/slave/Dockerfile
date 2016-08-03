@@ -14,9 +14,10 @@ RUN yum clean all && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum clean all && \
-    curl -v -j -k -L -H "Cookie: oraclelicense=accept-securebackup-cookie" \
-    http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm \
-    > jdk-8u102-linux-x64.rpm && \
+    curl -v -j -k -L -o jdk-8u102-linux-x64.rpm \
+    -H "Cookie: oraclelicense=accept-securebackup-cookie" \
+    http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm && \
+    rpm -ivh jdk-8u102-linux-x64.rpm && \
     mkdir -p /var/lib/jenkins && \
     chown -R 1001:0 /var/lib/jenkins && \
     chmod -R g+w /var/lib/jenkins
