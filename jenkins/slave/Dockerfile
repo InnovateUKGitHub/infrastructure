@@ -12,7 +12,6 @@ RUN yum clean all && \
     export INSTALL_PKGS="nss_wrapper gettext tar git" && \
     yum clean all && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
-    rpm -V $INSTALL_PKGS && \
     yum clean all && \
     curl -v -j -k -L -o jdk-8u102-linux-x64.rpm \
     -H "Cookie: oraclelicense=accept-securebackup-cookie" \
