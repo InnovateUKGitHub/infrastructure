@@ -5,13 +5,15 @@ MAINTAINER Justin Cook <justin.cook@digital.bis.gov.uk>
 
 # Install headless Java
 USER root
-RUN yum clean all && \
+RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    yum clean all && \
     yum-config-manager --disable rhel* 1>/dev/null && \
     yum-config-manager --enable rhel-7-server-rpms && \
     yum-config-manager --enable rhel-7-server-ose-3.2-rpms && \
     export INSTALL_PKGS="nss_wrapper gettext tar git" && \
     yum clean all && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+    rpm -V $INSTALL_PKGS && \
     yum clean all && \
     curl -v -j -k -L -o jdk-8u102-linux-x64.rpm \
     -H "Cookie: oraclelicense=accept-securebackup-cookie" \
