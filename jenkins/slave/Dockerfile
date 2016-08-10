@@ -13,7 +13,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     yum-config-manager --enable rhel-7-server-eus-rpms && \
     yum-config-manager --enable rhel-7-server-eus-supplementary-rpms && \
     yum-config-manager --enable rhel-7-server-ose-3.2-rpms && \
-    export INSTALL_PKGS="nss_wrapper gettext tar git rh-maven33" && \
+    export INSTALL_PKGS="nss_wrapper gettext tar git docker rh-maven33" && \
     yum clean all && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
