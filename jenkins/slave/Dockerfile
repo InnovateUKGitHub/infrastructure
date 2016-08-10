@@ -22,6 +22,8 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     -H "Cookie: oraclelicense=accept-securebackup-cookie" \
     http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm && \
     rpm -ivh jdk-8u102-linux-x64.rpm && \
+    rm /etc/alternatives/java && \
+    ln -s /usr/java/jdk1.8.0_102/bin/java /etc/alternatives/java && \
     rm -f jdk-8u102-linux-x64.rpm && \
     mkdir -p /var/lib/jenkins && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
