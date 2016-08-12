@@ -8,6 +8,29 @@ metadata:
     iconClass: icon-jenkins
     tags: instant-app,jenkins
   name: jenkins-slave-builder
+parameters:
+- description: The name of an image to convert to a Jenkins slave image.
+  displayName: Image Name
+  name: IMAGE_NAME
+  required: true
+  value: rhel7/rhel
+- description: Label for slave pods which are used by Jenkins to discover slave pods and assign jobs to them
+  displayName: Jenkins Slave Label
+  name: SLAVE_LABEL
+  required: true
+  value: jdk8
+- description: Git repository with Dockerfile and slave entrypoint.
+  displayName: Repository URL
+  name: SLAVE_REPO_URL
+  value: https://github.com/BISDigital/infrastructure.git
+- description: The sub-directory inside the repository.
+  displayName: Context Directory
+  name: SLAVE_REPO_CONTEXTDIR
+  value: jenkins/slave
+- description: The git ref or tag to use for customization.
+  displayName: Git Reference
+  name: SLAVE_REPO_REF
+  value: master
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -47,26 +70,3 @@ objects:
       type: Docker
     triggers:
     - type: ConfigChange
-parameters:
-- description: The name of an image to convert to a Jenkins slave image.
-  displayName: Image Name
-  name: IMAGE_NAME
-  required: true
-  value: rhel7/rhel
-- description: Label for slave pods which are used by Jenkins to discover slave pods and assign jobs to them
-  displayName: Jenkins Slave Label
-  name: SLAVE_LABEL
-  required: true
-  value: jdk8
-- description: Git repository with Dockerfile and slave entrypoint.
-  displayName: Repository URL
-  name: SLAVE_REPO_URL
-  value: https://github.com/BISDigital/infrastructure.git
-- description: The sub-directory inside the repository.
-  displayName: Context Directory
-  name: SLAVE_REPO_CONTEXTDIR
-  value: jenkins/slave
-- description: The git ref or tag to use for customization.
-  displayName: Git Reference
-  name: SLAVE_REPO_REF
-  value: master
