@@ -24,34 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
-
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
-
-- name: Start haveged
-  service: name=haveged state=started
-
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
-
-- include: primary.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-
-- include: replica.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-
-- include: dnsentries.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  
+- name: Insert wildcard entries for internal forward zones
+  shell:
+    kinit admin -k -t {{ ipaserver_keytab }} ;
+    ipa dnsrecord-add {{ ipaserver_domain }} *.{{ item.name }} --a-rec {{ item.ip_addr }}
+  with_items:
+    - "{{ ipa_wildcard_zones }}"
