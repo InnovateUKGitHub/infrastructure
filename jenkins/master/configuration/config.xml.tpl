@@ -10,7 +10,7 @@
   </authorizationStrategy>
   <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.11">
     <server>ukbliteipa01.int.licensing.service.trade.gov.uk</server>
-    <rootDN>dc=lite,dc=bis,dc=gov,dc=uk</rootDN>
+    <rootDN>dc=int,dc=licensing,dc=service,dc=trade,dc=gov,dc=uk</rootDN>
     <inhibitInferRootDN>false</inhibitInferRootDN>
     <userSearchBase>cn=users,cn=accounts</userSearchBase>
     <userSearch>uid={0}</userSearch>
