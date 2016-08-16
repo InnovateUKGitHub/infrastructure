@@ -7,13 +7,13 @@ ansible_ssh_user=cloud-user
 ansible_sudo=true
 deployment_type=openshift-enterprise
 containerized=true
-openshift_master_default_subdomain=app.lite.bis.gov.uk
+openshift_master_default_subdomain=app.int.licensing.service.trade.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
-ukbliteaom01.lite.bis.gov.uk ansible_host=10.100.1.21
+ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
 
 [nodes]
-ukbliteaom01.lite.bis.gov.uk ansible_host=10.100.1.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukbliteaon01.lite.bis.gov.uk ansible_host=10.100.1.22 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukbliteaon02.lite.bis.gov.uk ansible_host=10.100.1.23 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukbliteaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ukbliteaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
