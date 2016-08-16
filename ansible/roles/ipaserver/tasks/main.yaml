@@ -48,10 +48,15 @@
 
 - include: primary.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
+  tags:
+    - primary
 
 - include: replica.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
+  tags:
+    - replica
 
 - include: dnsentries.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  
+  tags:
+    - dnsentries
