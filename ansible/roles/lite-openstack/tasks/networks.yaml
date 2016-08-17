@@ -88,7 +88,7 @@
   os_router:
     state: present
     name: WAN Gateway
-    network: Internet
+    network: internet
     interfaces:
       - app1subnet
       - mgmt1subnet
