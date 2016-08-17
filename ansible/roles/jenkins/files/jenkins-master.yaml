@@ -144,15 +144,15 @@ objects:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/jenkins
-            name: jenkins-data
+            name: jenkins-s2i-master-pvc
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
         terminationGracePeriodSeconds: 30
         volumes:
-        - name: jenkins-data
+        - name: jenkins-s2i-master-pvc
           persistentVolumeClaim:
-            name: jenkins-s2i-master-pv
+            claimName: jenkins-s2i-master-pv
     test: false
     triggers:
     - type: ConfigChange
