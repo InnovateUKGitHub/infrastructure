@@ -35,9 +35,9 @@
     - security
 
 # Ensure the proper images are available
-- include: images.yaml
-  tags:
-    - images
+#- include: images.yaml
+#  tags:
+#    - images
 
 # Create the ports to assign each instance to
 - include: ports.yaml
