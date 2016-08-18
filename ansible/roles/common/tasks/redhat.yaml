@@ -30,6 +30,13 @@
                        pool='Red Hat Enterprise Linux Developer Suite'
   become: true
 
+- name: Disable some repositories
+  command:
+    yum-config-manager --disable "{{ item }}"
+  become: true
+  with_items:
+    - rhel-7-server-rt-beta-rpms
+
 - name: Update all software
   yum: name=* state=latest
   become: true
