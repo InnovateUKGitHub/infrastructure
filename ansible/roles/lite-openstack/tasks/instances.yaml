@@ -26,7 +26,7 @@
 
 - name: Create the golden host
   os_server:
-    name: ukbliteep01
+    name: ukbliteep01.int.licensing.service.trade.gov.uk
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -38,7 +38,7 @@
     nics:
       - port-name: dmzport11
     meta:
-      hostname: ukbliteep01
+      hostname: ukbliteep01.int.licensing.service.trade.gov.uk
 
 - name: Create IPA servers
   os_server:
@@ -57,8 +57,8 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbliteipa01', count: 1 }
-    - { name: 'ukbliteipa02', count: 2 }
+    - { name: 'ukbliteipa01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukbliteipa02.int.licensing.service.trade.gov.uk', count: 2 }
 
 - name: Create management OpenShift instances
   os_server:
@@ -73,9 +73,9 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukblitemom01', count: 1 }
-    - { name: 'ukblitemon01', count: 2 }
-    - { name: 'ukblitemon02', count: 3 }
+    - { name: 'ukblitemom01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukblitemon01.int.licensing.service.trade.gov.uk', count: 2 }
+    - { name: 'ukblitemon02.int.licensing.service.trade.gov.uk', count: 3 }
 
 - name: Create app OpenShift instances
   os_server:
@@ -90,6 +90,6 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbliteaom01', count: 1 }
-    - { name: 'ukbliteaon01', count: 2 }
-    - { name: 'ukbliteaon02', count: 3 }
+    - { name: 'ukbliteaom01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukbliteaon01.int.licensing.service.trade.gov.uk', count: 2 }
+    - { name: 'ukbliteaon02.int.licensing.service.trade.gov.uk', count: 3 }
