@@ -12,9 +12,9 @@ openshift_master_default_subdomain=mgmt.int.licensing.service.trade.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21
+ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk
 
 [nodes]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22 openshift_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23 openshift_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
