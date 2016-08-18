@@ -5,6 +5,7 @@ MAINTAINER Justin Cook <justin.cook@digital.bis.gov.uk>
 USER root
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum clean all && \
+    yum-config-manager --disable rhel-7-server-rt-beta-rpms && \
     yum-config-manager --enable rhel-7-server-rpms && \
     yum-config-manager --enable rhel-7-server-extras-rpms && \
     yum-config-manager --enable rhel-server-rhscl-7-rpms && \
