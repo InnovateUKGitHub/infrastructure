@@ -152,7 +152,7 @@ objects:
         volumes:
         - name: jenkins-s2i-master-pvc
           persistentVolumeClaim:
-            claimName: jenkins-s2i-master-pv
+            claimName: jenkins-s2i-master-pvc
     test: false
     triggers:
     - type: ConfigChange
