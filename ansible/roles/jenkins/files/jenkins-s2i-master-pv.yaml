@@ -8,5 +8,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   cinder:
-    fsType: ext3
+    fsType: xfs
     volumeID: 61c03710-728c-409a-b07e-766b29d7877d
