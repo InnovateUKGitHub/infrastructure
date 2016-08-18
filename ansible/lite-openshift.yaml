@@ -90,7 +90,7 @@
   - name: Save iptables rules
     shell: iptables-save > /etc/sysconfig/iptables
   - name: Set the master schedulable
-    command: /usr/local/bin/oadm manage-node {{ ansible_host }} --schedulable=true
+    command: /usr/local/bin/oadm manage-node {{ inventory_hostname }} --schedulable=true
     when: "'masters' in group_names"
   - name: Set correct URL in master-config.yaml
     command: >
