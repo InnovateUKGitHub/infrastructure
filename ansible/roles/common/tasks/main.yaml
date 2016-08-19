@@ -27,22 +27,18 @@
 # Set the hostname
 - name: Set the hostname
   hostname: name={{ inventory_hostname }}
-  become: true
 
 # Set the time zone
 - name: Set to UTC timezone
   command: timedatectl set-timezone UTC 
-  become: true
 
 # Populate /etc/hosts with critical hosts
 - name: Populate /etc/hosts
   template: src=hosts.j2 dest=/etc/hosts
-  become: true
 
 # Disable cloud-init since it does things like reset the hostname on boot
 - name: Disable cloud-init
   service: name="{{ item }}" enabled=no
-  become: true 
   with_items:
     - cloud-init
     - cloud-init-local
