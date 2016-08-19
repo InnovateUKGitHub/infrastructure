@@ -28,16 +28,17 @@
   redhat_subscription: state=present username={{ redhat_username }} 
                        password={{ redhat_password }}
                        pool='Red Hat Enterprise Linux Developer Suite'
-  become: true
+
+- name: Install yum-utils
+  yum: 
+    disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils state=latest
 
 - name: Disable some repositories
   command:
     yum-config-manager --disable "{{ item }}"
-  become: true
   with_items:
     - rhel-7-server-rt-beta-rpms
 
 - name: Update all software
   yum: name=* state=latest
-  become: true
   notify: Restart the node
