@@ -25,10 +25,12 @@ needs registering at the Red Hat Developer Community.
 
 ### IPA
 
-The `lite-platforms.yaml` playbook will also install IPA server in a master -
+The `lite-ipaserver.yaml` playbook will also install IPA server in a master -
 replica configuration. The build will ask for two passwords, and these are
 used to set the passwords for the build, so generate a password or two and
 jot them down. 
+
+`$ ansible-playbook -i hosts/lite -u cloud-user lite-ipaserver.yaml`
 
 ### OpenShift
 In order to build the OpenShift cluster environments, it is necessary to check
