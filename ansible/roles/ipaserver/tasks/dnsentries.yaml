@@ -31,13 +31,17 @@
   with_items:
     - "{{ ipa_wildcard_zones }}"
   register: wildcard_result
-  failed_when: "'no modifications to be performed' not in wildcard_result.stderr"
+  failed_when: "wildcard_result != 0 and 'no modifications to be performed' \
+                not in wildcard_result.stderr and 'already exists' not in \
+                wildcard_result.stderr"
 
 - name: Insert each hosts A record
   shell: >
     kinit admin -k -t {{ ipaserver_keytab }} ;
     ipa dnsrecord-add {{ ipaserver_domain }} {{ item }}. --a-rec \
       {{ hostvars[item]['ansible_host'] }}
-  with_inventory_hostnames: all
+  with_inventory_hostnames: lite
   register: arecords_result
-  failed_when: "'no modifications to be performed' not in arecords_result.stderr"
+  failed_when: "arecords_result != 0 and 'no modifications to be performed' \
+                not in arecords_result.stderr and 'already exists' not in \
+                arecords_result.stderr"
