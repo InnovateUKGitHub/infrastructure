@@ -1,5 +1,5 @@
 ---
-# Copyright (c) 2016, Department for Business, Innovation and Skills
+# Copyright (c) 2016, Department for Business, Energy & Industrial Strategy
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,13 +24,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The DNS servers for the Licensing arch
+# The naming and authentication/authorization servers 
 
-- nick: ns1
-  groups:
-    - dns
-  name: ns1.lite.bis.gov.uk
+- nick: ukbliteipa01
+  name: ukbliteipa01.int.licensing.service.trade.gov.uk
   box: "%project.box%"
+  groups:
+    - ipa
+    - mgmt
   memory: 1024
   cpus: 1
   box_check_update: true
@@ -38,19 +39,18 @@
   networks:
     - net: private_network
       type: static
-      ip: 10.100.100.5
+      ip: 10.100.100.11
       mask: 255.255.0.0
       interface: "%project.interface%"
-#  provision:
-#    - type: shell
-#      path: "%host.files_dir%/provision_ns1.sh"
+  natnet: "%global.natnet%"
   authorized_keys: "%global.authorized_keys%"
 
-- nick: ns2
-  groups:
-    - dns
-  name: ns2.lite.bis.gov.uk
+- nick: ukbliteipa02
+  name: ukbliteipa02.int.licensing.service.trade.gov.uk
   box: "%project.box%"
+  groups:
+    - ipa
+    - mgmt
   memory: 1024
   cpus: 1
   box_check_update: true
@@ -58,10 +58,8 @@
   networks:
     - net: private_network
       type: static
-      ip: 10.100.100.6
+      ip: 10.100.100.12
       mask: 255.255.0.0
       interface: "%project.interface%"
-#  provision:
-#    - type: shell
-#      path: "%host.files_dir%/provision_ns2.sh"
+  natnet: "%global.natnet%"
   authorized_keys: "%global.authorized_keys%"
