@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2016, Department for Business, Innovation and Skills
+# Copyright (c) 2016, Department for Business, Energy & Industrial Strategy
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
