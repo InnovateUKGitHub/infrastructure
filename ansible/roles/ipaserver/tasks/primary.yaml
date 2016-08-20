@@ -66,6 +66,10 @@
     ipa dnszone-add {{ item }}
   with_items:
     - "{{ ipa_reverse_zones }}"
+  register: reverse_result
+  failed_when: "reverse_result.rc != 0 and 'no modifications to be performed' \
+                not in reverse_result.stderr and 'already exists' not \
+                in reverse_result.stderr"
 
 - name: Create DNS entries for replicas
   shell:
