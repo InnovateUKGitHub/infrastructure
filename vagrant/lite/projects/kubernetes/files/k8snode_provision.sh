@@ -58,7 +58,7 @@ install_prerequisites () {
     yum install -y kubernetes-node flannel
     systemctl disable firewalld
     systemctl stop firewalld
-    sed -ie 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
+    sed -i 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
     setenforce 0
   else
     echo "Not Red Hat so crossing fingers"
@@ -68,26 +68,26 @@ install_prerequisites () {
 install_prerequisites
 
 # Set the Kubernetes config
-sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
+sed -i "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://$MNAME:8080\"|" \
   /etc/kubernetes/config
 
 # Set the Kubelet config
-sed -ie 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
+sed -i 's|KUBELET_ADDRESS=".*"|KUBELET_ADDRESS="--address=0.0.0.0"|' \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${HNAME}\"|" \
+sed -i "s|KUBELET_HOSTNAME=\".*\"|KUBELET_HOSTNAME=\"--hostname-override=${HNAME}\"|" \
   /etc/kubernetes/kubelet
-sed -ie "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
+sed -i "s|KUBELET_API_SERVER=\".*\"|KUBELET_API_SERVER=\"--api_servers=http://${MNAME}:8080\"|" \
   /etc/kubernetes/kubelet
 
 KUBELET_ARGS="--register-node=true --config=/etc/kubernetes/manifests"
 KUBELET_ARGS="$KUBELET_ARGS --resolv-conf=''"
 KUBELET_ARGS="$KUBELET_ARGS --cluster-dns=${SKYDNSIP} --cluster-domain=${DOMNAME}"
 
-sed -ie "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"${KUBELET_ARGS}\"|" \
+sed -i "s|KUBELET_ARGS=\".*\"|KUBELET_ARGS=\"${KUBELET_ARGS}\"|" \
   /etc/kubernetes/kubelet
 
 # Edit the docker sysconfig
-sed -ie "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
+sed -i "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
   /etc/sysconfig/docker
 
 # Start the relevant services
@@ -98,11 +98,11 @@ do
 done
 
 # Set the Flannel config
-sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
+sed -i "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
   /etc/sysconfig/flanneld
-sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
+sed -i 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
   /etc/sysconfig/flanneld
-sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
+sed -i "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
   /etc/sysconfig/flanneld
 
 # Start Flannel

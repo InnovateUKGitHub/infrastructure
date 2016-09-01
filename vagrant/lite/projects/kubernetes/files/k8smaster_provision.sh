@@ -58,7 +58,7 @@ install_prerequisites () {
     yum install -y kubernetes etcd flannel
     systemctl disable firewalld
     systemctl stop firewalld
-    sed -ie 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
+    sed -i 's|^SELINUX=.*|SELINUX=permissive|' /etc/selinux/config
     setenforce 0
   else
     echo "Not Red Hat so crossing fingers"
@@ -68,23 +68,23 @@ install_prerequisites () {
 install_prerequisites
 
 # Edit the /etc/etcd/etcd.conf and place the correct values
-sed -ie "s|ETCD_ADVERTISE_CLIENT_URLS=\".*\"|ETCD_ADVERTISE_CLIENT_URLS=\"http://${MADDR}:2379\"|" \
+sed -i "s|ETCD_ADVERTISE_CLIENT_URLS=\".*\"|ETCD_ADVERTISE_CLIENT_URLS=\"http://${MADDR}:2379\"|" \
   /etc/etcd/etcd.conf
-sed -ie 's|ETCD_LISTEN_CLIENT_URLS=".*"|ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"|' \
+sed -i 's|ETCD_LISTEN_CLIENT_URLS=".*"|ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"|' \
   /etc/etcd/etcd.conf
-sed -ie 's|#ETCD_LISTEN_PEER_URLS=".*"|ETCD_LISTEN_PEER_URLS="http://localhost:2380"|' \
+sed -i 's|#ETCD_LISTEN_PEER_URLS=".*"|ETCD_LISTEN_PEER_URLS="http://localhost:2380"|' \
   /etc/etcd/etcd.conf
 
 # Edit the Kubernetes config file
-sed -ie "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${MNAME}:8080\"|" \
+sed -i "s|KUBE_MASTER=\".*\"|KUBE_MASTER=\"--master=http://${MNAME}:8080\"|" \
   /etc/kubernetes/config
 
 # Edit the Kubernetes API server config
-sed -ie "s|KUBE_API_ADDRESS=\".*\"|KUBE_API_ADDRESS=\"--insecure-bind-address=${MADDR}\"|" \
+sed -i "s|KUBE_API_ADDRESS=\".*\"|KUBE_API_ADDRESS=\"--insecure-bind-address=${MADDR}\"|" \
   /etc/kubernetes/apiserver
 
 # Edit the docker sysconfig
-sed -ie "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
+sed -i "s|#\s*INSECURE_REGISTRY=.*|INSECURE_REGISTRY='--insecure-registry=${IDREG}'|" \
   /etc/sysconfig/docker
 
 # Start master systemd services
@@ -109,11 +109,11 @@ etcdctl set coreos.com/network/config << __EOF__
 __EOF__
 
 # Configure Flannel config
-sed -ie "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
+sed -i "s|FLANNEL_ETCD=\".*\"|FLANNEL_ETCD=\"http://${MNAME}:2379\"|" \
   /etc/sysconfig/flanneld
-sed -ie 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
+sed -i 's|FLANNEL_ETCD_KEY=".*"|FLANNEL_ETCD_KEY="/coreos.com/network"|' \
   /etc/sysconfig/flanneld
-sed -ie "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
+sed -i "s|#FLANNEL_OPTIONS=\".*\"|FLANNEL_OPTIONS=\"-iface=${MADDR}\"|" \
   /etc/sysconfig/flanneld
 
 # Force Docker to load the new config
