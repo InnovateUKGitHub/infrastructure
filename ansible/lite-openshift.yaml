@@ -73,6 +73,7 @@
 
 - include: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
   vars:
+    openshift_release: 3.2
     g_etcd_hosts:   "{{ groups.etcd | default([]) }}"
     g_lb_hosts:     "{{ groups.lb | default([]) }}"
     g_master_hosts: "{{ groups.masters | default([]) }}"
@@ -101,7 +102,7 @@
     when: "'masters' in group_names"
   - name: Set correct URL in master-config.yaml
     command: >
-      sed -ie 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
+      sed -i 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
       /etc/origin/master/master-config.yaml
     when: "'masters' in group_names"
   - name: Restart atomic-openshift-master
