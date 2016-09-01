@@ -53,5 +53,6 @@
 
 - name: Set PEERDNS to no on eth0
   lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 
-              regexp='^PEERDNS=".*"' line='PEERDNS="no"' state=present
+              regexp='^PEERDNS=("?)yes("?)' line='PEERDNS=\1no\2' 
+              backrefs=yes
 
