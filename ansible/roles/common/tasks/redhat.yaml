@@ -27,7 +27,8 @@
 - name: Register with Red Hat Enterprise Linux Developer Suite
   redhat_subscription: state=present username={{ redhat_username }} 
                        password={{ redhat_password }}
-                       pool='Red Hat Enterprise Linux Developer Suite'
+                       autosubscribe=true
+#                       pool='Red Hat Enterprise Linux Developer Suite'
 
 - name: Install yum-utils
   yum: 
@@ -45,3 +46,12 @@
 
 - name: Disable firewalld
   service: name=firewalld state=stopped enabled=no
+
+- name: Prevent NetworkManager from overwriting /etc/resolv.conf
+  lineinfile: dest=/etc/NetworkManager/NetworkManager.conf regexp="^dns="
+              insertafter='^\[main\]$' line="dns=none" state=present
+
+- name: Set PEERDNS to no on eth0
+  lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 
+              regexp='^PEERDNS=".*"' line='PEERDNS="no"' state=present
+
