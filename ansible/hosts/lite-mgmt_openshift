@@ -29,7 +29,7 @@ masters
 nodes
 
 [OSEv3:vars]
-ansible_ssh_user=cloud-user
+#ansible_ssh_user=cloud-user
 ansible_become=true
 ansible_sudo=true
 deployment_type=openshift-enterprise
