@@ -25,7 +25,8 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     ln -s /usr/java/jdk1.8.0_102/bin/java /etc/alternatives/java && \
     rm -f jdk-8u102-linux-x64.rpm && \
     curl -s https://get.sdkman.io | bash && \
-    source "/root/.sdkman/bin/sdkman-init.sh" && \
+    sed -i 's/mapfile\ .*//' /root/.sdkman/src/sdkman-path-helpers.sh && \
+    source /root/.sdkman/bin/sdkman-init.sh && \
     echo -ne '\n' | sdk install gradle 3.0 && \
     mkdir -p /var/lib/jenkins && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
