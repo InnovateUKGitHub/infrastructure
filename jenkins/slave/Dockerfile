@@ -12,7 +12,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     yum-config-manager --enable rhel-7-server-eus-rpms && \
     yum-config-manager --enable rhel-7-server-eus-supplementary-rpms && \
     yum-config-manager --enable rhel-7-server-ose-3.2-rpms && \
-    export INSTALL_PKGS="nss_wrapper gettext tar git rh-maven33" && \
+    export INSTALL_PKGS="nss_wrapper gettext tar git rh-maven33 unzip" && \
     yum clean all && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
@@ -21,9 +21,12 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     -H "Cookie: oraclelicense=accept-securebackup-cookie" \
     http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm && \
     rpm -ivh jdk-8u102-linux-x64.rpm && \
-    rm /etc/alternatives/java && \
+    rm -f /etc/alternatives/java && \
     ln -s /usr/java/jdk1.8.0_102/bin/java /etc/alternatives/java && \
     rm -f jdk-8u102-linux-x64.rpm && \
+    curl -s https://get.sdkman.io | bash && \
+    source "/root/.sdkman/bin/sdkman-init.sh" && \
+    echo -ne '\n' | sdk install gradle 3.0 && \
     mkdir -p /var/lib/jenkins && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
     chown -R 1001:0 /var/lib/jenkins && \
