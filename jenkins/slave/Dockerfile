@@ -3,7 +3,8 @@ FROM rhel7/rhel
 MAINTAINER Justin Cook <justin.cook@digital.bis.gov.uk>
 
 USER root
-RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+RUN curl -o /etc/yum.repos.d/bintray-sbt-rpm.repo https://bintray.com/sbt/rpm/rpm  && \
+    rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum clean all && \
     yum-config-manager --disable rhel-7-server-rt-beta-rpms && \
     yum-config-manager --enable rhel-7-server-rpms && \
@@ -13,11 +14,14 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     yum-config-manager --enable rhel-7-server-eus-supplementary-rpms && \
     yum-config-manager --enable rhel-7-server-ose-3.2-rpms && \
     export INSTALL_PKGS="nss_wrapper gettext tar git rh-maven33 unzip" && \
-    export INSTALL_PKGS="atomic-openshift-clients $INSTALL_PKGS" && \
-    yum clean all && \
+    export INSTALL_PKGS="atomic-openshift-clients sbt $INSTALL_PKGS" && \
+    yum makecache && \
     yum install -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    yum clean all && \
+    curl -s https://get.sdkman.io | bash && \
+    sed -i 's/mapfile\ .*//' /root/.sdkman/src/sdkman-path-helpers.sh && \
+    source /root/.sdkman/bin/sdkman-init.sh && \
+    echo -ne '\n' | sdk install gradle 3.0 && \
     curl -v -j -k -L -o jdk-8u102-linux-x64.rpm \
     -H "Cookie: oraclelicense=accept-securebackup-cookie" \
     http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm && \
@@ -25,10 +29,6 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
     rm -f /etc/alternatives/java && \
     ln -s /usr/java/jdk1.8.0_102/bin/java /etc/alternatives/java && \
     rm -f jdk-8u102-linux-x64.rpm && \
-    curl -s https://get.sdkman.io | bash && \
-    sed -i 's/mapfile\ .*//' /root/.sdkman/src/sdkman-path-helpers.sh && \
-    source /root/.sdkman/bin/sdkman-init.sh && \
-    echo -ne '\n' | sdk install gradle 3.0 && \
     mkdir -p /var/lib/jenkins && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
     chown -R 1001:0 /var/lib/jenkins && \
