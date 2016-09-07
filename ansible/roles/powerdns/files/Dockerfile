@@ -1,0 +1,26 @@
+FROM rhel7/rhel
+
+MAINTAINER Justin Cook <justin.cook@digital.bis.gov.uk>
+
+USER root
+
+RUN curl -o /etc/yum.repos.d/powerdns-auth-40.repo \
+    https://repo.powerdns.com/repo-files/centos-auth-40.repo && \
+    yum -y --setopt=tsflags='' install pdns pdns-backend-sqlite bind-utils && \
+    yum clean all
+
+RUN mkdir /var/run/pdns && chown 1001:1001 /var/run/pdns && \
+    sqlite3 /etc/pdns/pdns.sqlite3 < /usr/share/doc/pdns-backend-sqlite-4.0.1/schema.sqlite3.sql && \
+    chown -R 1001:1001 /etc/pdns
+
+ARG role=master
+ENV ROLE ${role}
+
+COPY ${ROLE}/pdns.conf /etc/pdns/
+
+USER 1001
+
+EXPOSE 5353/tcp
+EXPOSE 5353/udp
+
+CMD ["pdns_server", "--daemon=no"]
