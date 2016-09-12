@@ -136,7 +136,7 @@ objects:
         volumes:
         - name: powerdns-master-pvc
           persistentVolumeClaim:
-            claimName: powerdns-master-pv
+            claimName: powerdns-master-pvc
     triggers:
     - type: ConfigChange
     - imageChangeParams:
