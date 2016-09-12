@@ -31,8 +31,7 @@ if [ "$isMASTER" = "yes" ]
 then
   if [ ! -f "/etc/pdns/zones/pdns.sqlite3" ]
   then
-    sqlite3 /etc/pdns/pdns.sqlite3 < /usr/share/doc/pdns-backend-sqlite-4.0.1/schema.sqlite3.sql
-    chown -R 1001:1001 /etc/pdns
+    sqlite3 /etc/pdns/zones/pdns.sqlite3 < /usr/share/doc/pdns-backend-sqlite-4.0.1/schema.sqlite3.sql
   fi
 fi
 
