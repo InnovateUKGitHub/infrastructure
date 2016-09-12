@@ -86,7 +86,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: powerdns-master:1
-          namespace: LITE
+          namespace: lite
       type: Source
     triggers:
     - type: ConfigChange
