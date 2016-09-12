@@ -82,12 +82,11 @@ objects:
       secrets: []
       type: Git
     strategy:
-      sourceStrategy:
+      dockerStrategy:
         from:
-          kind: ImageStreamTag
-          name: powerdns-master:1
-          namespace: lite
-      type: Source
+          kind: DockerImage
+          name: rhel7/rhel
+      type: Docker
     triggers:
     - type: ConfigChange
     - imageChange: {}
