@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: powerdns-master-pv
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  cinder:
+    fsType: xfs
+    volumeID: 131fa783-2710-4463-b717-337c448b5170
