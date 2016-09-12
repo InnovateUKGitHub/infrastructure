@@ -124,7 +124,7 @@ objects:
             resources: {}
             terminationMessagePath: /dev/termination-log
             volumeMounts:
-            - mountPath: /etc/pdns
+            - mountPath: /etc/pdns/zones
               name: powerdns-master-pvc
             resources:
               limits:
