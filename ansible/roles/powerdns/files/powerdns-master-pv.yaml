@@ -9,4 +9,4 @@ spec:
     - ReadWriteOnce
   cinder:
     fsType: xfs
-    volumeID: 131fa783-2710-4463-b717-337c448b5170
+    volumeID: 25579a98-e511-45b2-9c68-7461c49f88c2
