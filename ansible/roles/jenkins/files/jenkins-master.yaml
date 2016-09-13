@@ -20,7 +20,7 @@ parameters:
   value: master
 - description: Path within Git project to build; empty for root project directory.
   name: CONTEXT_DIR
-  value: jenkins/master
+  value: docker/jenkins/master
 - description: Maximum amount of memory the container can use.
   displayName: Memory Limit
   name: MEMORY_LIMIT

@@ -18,7 +18,7 @@ parameters:
   value: master
 - description: Path within Git project to build
   name: CONTEXT_DIR
-  value: powerdns
+  value: docker/powerdns
 - description: Maximum amount of memory the container can use.
   displayName: Memory Limit
   name: MEMORY_LIMIT
@@ -51,18 +51,6 @@ objects:
       deploymentconfig: powerdns-master
     sessionAffinity: None
     type: ClusterIP
-- apiVersion: v1
-  kind: Route
-  metadata:
-    labels:
-      app: powerdns-master
-    name: powerdns-master
-  spec:
-    port:
-      targetPort: 53
-    to:
-      kind: Service
-      name: powerdns-master
 - apiVersion: v1
   kind: BuildConfig
   metadata:
