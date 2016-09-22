@@ -109,6 +109,34 @@
     name=remote_repositories
     description="Traffic for node's access to remote_repositories"
 
+##### External DNS #####
+
+- name: Create remote_dns security group
+  os_security_group:
+    name=remote_dns
+    description="Remote dns queries"
+
+- name: Remove default egress allowed from remote_dns group
+  os_security_group_rule:
+    state: absent
+    security_group: remote_dns
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow remote dns queries
+  os_security_group_rule:
+    security_group: remote_dns
+    protocol: "{{ item }}"
+    port_range_min: 53
+    port_range_max: 53
+    remote_ip_prefix: 0.0.0.0/0
+  with_items:
+  - tcp
+  - udp
+
 ##### IPA Servers #####
 
 - name: Create ipa_server security group

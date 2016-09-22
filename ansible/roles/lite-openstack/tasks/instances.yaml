@@ -40,6 +40,40 @@
     meta:
       hostname: ukbliteep01.int.licensing.service.trade.gov.uk
 
+- name: Create external dns master server
+  os_server:
+    name: 'ukblitens01.int.licensing.service.trade.gov.uk'
+    image: rhel7
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - remote_repositories
+      - remote_dns
+    nics:
+      - port-name: dmzport21
+    meta:
+      hostname: 'ukblitens01.int.licensing.service.trade.gov.uk'
+    volumes:
+      - powerdns-master-pv
+
+- name: Create external dns slave server
+  os_server:
+    name: 'ukblitens02.int.licensing.service.trade.gov.uk'
+    image: rhel7
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - remote_repositories
+      - remote_dns
+    nics:
+      - port-name: dmzport22
+    meta:
+      hostname: 'ukblitens02.int.licensing.service.trade.gov.uk'
+
 - name: Create IPA servers
   os_server:
     name: "{{ item.name }}"

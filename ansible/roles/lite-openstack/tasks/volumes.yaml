@@ -24,32 +24,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Create the networks and attach subnets
-- include: networks.yaml
-  tags:
-    - networks
-
-# Create the associated security groups for subnets and services
-- include: security.yaml
-  tags:
-    - security
-
-# Ensure the proper images are available
-#- include: images.yaml
-#  tags:
-#    - images
-
-# Create the ports to assign each instance to
-- include: ports.yaml
-  tags:
-    - ports
-
-# Create Cinder volumes
-- include: volumes.yaml
-  tags:
-    - volumes
-
-# Create instances homed to specific subnets with attached security groups
-- include: instances.yaml
-  tags:
-    - instances
+- name: Create master dns volume
+  os_volume:
+    display_name: powerdns-master-pv
+    size: 1
+    state: present
