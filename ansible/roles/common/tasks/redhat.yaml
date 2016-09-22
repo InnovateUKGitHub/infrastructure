@@ -46,6 +46,7 @@
 
 - name: Disable firewalld
   service: name=firewalld state=stopped enabled=no
+  ignore_errors: yes
 
 - name: Prevent NetworkManager from overwriting /etc/resolv.conf
   lineinfile: dest=/etc/NetworkManager/NetworkManager.conf regexp="^dns="
