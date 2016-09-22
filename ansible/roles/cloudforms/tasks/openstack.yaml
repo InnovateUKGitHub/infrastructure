@@ -24,39 +24,55 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[lite-ras]
-ukbliteep01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.11
+- name: Create CloudForms security group
+  os_security_group:
+    name=cloudforms
+    description="CloudForms access"
 
-[lite-ns]
-ukblitens01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.21 dnsrole=master
-ukblitens02.int.licensing.service.trade.gov.uk ansible_host=10.100.254.22 dnsrole=slave
+- name: Remove default egress allowed from cloudforms group
+  os_security_group_rule:
+    state: absent
+    security_group: cloudforms
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
 
-[lite-mgmt]
+- name: Allow https (tcp:443) from any host
+  os_security_group_rule:
+    security_group: cloudforms
+    protocol: tcp
+    port_range_min: 443
+    port_range_max: 443
+    remote_ip_prefix: "{{ item }}"
+  with_items:
+  - 0.0.0.0/0
 
-[lite-mgmt-cloudforms]
-ukblitecfm01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.5
+- name: Create a port for CloudForms master
+  os_port:
+    state: present
+    name: mgmtport05
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.5
+    security_groups:
+      - mgmt_nodes
+      - cloudforms
 
-[lite-mgmt-ipa]
-ukbliteipa01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.11 iparole=primary
-ukbliteipa02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.12 iparole=replica
+- name: Create the CloudForms master
+  os_server:
+    name: ukblitecfm01.int.licensing.service.trade.gov.uk
+    image: cfme-rhos
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: yes
+    security_groups:
+      - mgmt_nodes
+      - cloudforms
+    nics:
+      - port-name: mgmtport05
+    meta:
+      hostname: ukblitecfm01.int.licensing.service.trade.gov.uk
 
-[lite-mgmt-openshift]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21
-ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22
-ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23
-
-[lite-app-openshift]
-ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
-ukbliteaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22
-ukbliteaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
-
-[lite:children]
-lite-ras
-lite-ns
-lite-mgmt
-lite-mgmt-ipa
-lite-mgmt-openshift
-lite-app-openshift
-
-[lite:vars]
-ansible_sudo=true
