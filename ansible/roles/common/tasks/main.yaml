@@ -32,10 +32,6 @@
 - name: Set to UTC timezone
   command: timedatectl set-timezone UTC 
 
-# Populate /etc/hosts with critical hosts
-- name: Populate /etc/hosts
-  template: src=hosts.j2 dest=/etc/hosts
-
 # Disable cloud-init since it does things like reset the hostname on boot
 - name: Disable cloud-init
   service: name="{{ item }}" enabled=no
