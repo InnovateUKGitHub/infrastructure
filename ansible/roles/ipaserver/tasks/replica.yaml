@@ -28,6 +28,7 @@
   copy: src=/tmp/replica-info-{{ inventory_hostname }}.gpg
         dest=/var/lib/ipa/replica-info-{{ inventory_hostname }}.gpg
 
+# TODO: remove the hard-coded values
 - name: Enter primary in /etc/hosts
   lineinfile: dest=/etc/hosts regexp="^10\.100\.100\.11"
               line="10.100.100.11\tukbliteipa01.int.licensing.service.trade.gov.uk\tukbliteipa01"
