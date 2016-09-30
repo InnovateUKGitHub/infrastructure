@@ -47,5 +47,5 @@
   command: systemctl daemon-reload
 
 - name: Enable and start docker-powerdns-master.service
-  service: name=docker-powerdns-master state=started enabled=yes
+  service: name=docker-powerdns-master state=restarted enabled=yes
 

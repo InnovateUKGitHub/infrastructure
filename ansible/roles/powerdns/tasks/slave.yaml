@@ -38,5 +38,5 @@
   command: systemctl daemon-reload
 
 - name: Enable and start docker-powerdns-slave.service
-  service: name=docker-powerdns-slave state=started enabled=yes
+  service: name=docker-powerdns-slave state=restarted enabled=yes
 
