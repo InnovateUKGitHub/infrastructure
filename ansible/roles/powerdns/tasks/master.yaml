@@ -33,9 +33,19 @@
 - name: Change the owner of /mnt/powerdns-master-pv
   file: path=/mnt/powerdns-master-pv mode='g+rw' setype=svirt_sandbox_file_t
 
-- name: Start the master
-  command: >
-    docker run -d -u 1001:0 -p 0.0.0.0:53:5353/tcp -p 0.0.0.0:53:5353/udp
-    -v /mnt/powerdns-master-pv:/etc/pdns/zones:rw --name powerdns-master
-    docker.io/jhcook/powerdns:masterv1
+- name: Create the start script
+  template: src=master-create.j2 dest=/bin/pdnscreate owner=1001 
+            group=0 mode=0755
+
+- name: Copy systemd script for container
+  copy: src=docker-powerdns-master.service 
+        dest=/etc/systemd/system/docker-powerdns-master.service
+        owner=root group=root mode=0644
+
+# TODO: replace systemctl commands with systemd module in Ansible 2.2
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Enable and start docker-powerdns-master.service
+  service: name=docker-powerdns-master state=started enabled=yes
 

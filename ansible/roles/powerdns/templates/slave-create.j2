@@ -1,0 +1,15 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+set -x
+
+sleep 2
+
+NS1_INTIP={{ hostvars['ukblitens01.int.licensing.service.trade.gov.uk']['ansible_host'] }}
+
+/bin/docker exec -i powerdns-slave /bin/bash <<-__EOF__
+{% for domain in domains %}
+pdnsutil create-slave-zone {{ domain.name }} $NS1_INTIP
+pdns_control retrieve {{ domain.name }}
+{% endfor %}
+__EOF__

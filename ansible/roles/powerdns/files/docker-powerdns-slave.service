@@ -1,0 +1,23 @@
+[Unit]
+Description=PowerDNS Slave container
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=5
+Restart=no
+
+ExecStartPre=-/usr/bin/docker stop powerdns-slave
+ExecStartPre=-/usr/bin/docker rm powerdns-slave
+ExecStartPre=/usr/bin/docker pull docker.io/jhcook/powerdns:slavev1
+ExecStart=/usr/bin/docker run --rm --name powerdns-slave -u 1001:0 \
+          -p 0.0.0.0:53:5353/tcp -p 0.0.0.0:53:5353/udp \
+          docker.io/jhcook/powerdns:slavev1
+
+ExecStartPost=/bin/pdnscreate
+
+ExecStop=/usr/bin/docker kill powerdns-slave
+ExecStopPost=/usr/bin/docker rm powerdns-slave
+
+[Install]
+WantedBy=multi-user.target
