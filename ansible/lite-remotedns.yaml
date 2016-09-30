@@ -27,11 +27,11 @@
 - hosts: lite-ns
   vars:
     domains:
-      - name: licensing-qa.service.trade.gov.uk
-        ns1: ns1.licensing-qa.service.trade.gov.uk
-        ns1ip: 51.179.219.70
-        ns2: ns2.licensing-qa.service.trade.gov.uk
-        ns2ip: 51.179.219.75
+      - name: licensing-uat.service.trade.gov.uk
+        ns1: ns1.licensing-uat.service.trade.gov.uk
+        ns1ip: 51.179.219.81
+        ns2: ns2.licensing-uat.service.trade.gov.uk
+        ns2ip: 51.179.219.82
   roles: 
     - powerdns
   become: yes
