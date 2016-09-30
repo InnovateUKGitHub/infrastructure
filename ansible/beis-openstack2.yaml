@@ -1,0 +1,60 @@
+---
+# Copyright (c) 2016, Department for Business, Energy & Industrial Strategy
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- hosts: localhost
+  tasks:
+  - name: Change the dmz network DHCP to provide internal DNS
+    os_subnet:
+      name: dmz1subnet
+      network_name: dmz
+      cidr: 10.100.254.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the mgmt network DHCP to provide internal DNS
+    os_subnet:
+      name: mgmt1subnet
+      network_name: mgmt
+      cidr: 10.100.100.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the app network DHCP to provide internal DNS
+    os_subnet:
+      name: app1subnet
+      network_name: app
+      cidr: 10.100.1.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
+  - name: Change the svc network DHCP to provide internal DNS
+    os_subnet:
+      name: svc1subnet
+      network_name: svc
+      cidr: 10.100.20.0/24
+      dns_nameservers:
+        - 10.100.100.11
+        - 10.100.100.12
