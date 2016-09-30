@@ -24,7 +24,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Start the slave
-  command: >
-    docker run -d -u 1001:0 -p 0.0.0.0:53:5353/tcp -p 0.0.0.0:53:5353/udp
-    --name powerdns-slave docker.io/jhcook/powerdns:masterv1
+- name: Create the start script
+  template: src=slave-create.j2 dest=/bin/pdnscreate owner=1001
+            group=0 mode=0755
+
+- name: Copy systemd script for container
+  copy: src=docker-powerdns-slave.service
+        dest=/etc/systemd/system/docker-powerdns-slave.service
+        owner=root group=root mode=0644
+
+# TODO: replace systemctl commands with systemd module in Ansible 2.2
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Enable and start docker-powerdns-slave.service
+  service: name=docker-powerdns-slave state=started enabled=yes
+
