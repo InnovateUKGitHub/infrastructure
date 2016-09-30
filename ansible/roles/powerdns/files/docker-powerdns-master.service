@@ -12,7 +12,6 @@ ExecStartPre=-/usr/bin/docker rm powerdns-master
 ExecStartPre=/usr/bin/docker pull docker.io/jhcook/powerdns:masterv1
 ExecStart=/usr/bin/docker run --rm --name powerdns-master -u 1001:0 \
           -p 0.0.0.0:53:5353/tcp -p 0.0.0.0:53:5353/udp \
-          -v /mnt/powerdns-master-pv:/etc/pdns/zones:rw \
           docker.io/jhcook/powerdns:masterv1
 ExecStartPost=/bin/pdnscreate
 
