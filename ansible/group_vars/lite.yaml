@@ -25,7 +25,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # LITE QA
-#ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.69"'
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.69"'
 
 # The first entry is for reference only. By default, a reverse zone is created
 # for the subnet the master is connected to.

@@ -27,21 +27,15 @@
 - hosts: lite-ns
   vars:
     domains:
-      - name: licensing-dev.service.trade.gov.uk
-        ns1: ns1.licensing-dev.service.trade.gov.uk
-        ns1ip: 51.179.219.76
+      - name: licensing-qa.service.trade.gov.uk
+        ns1: ns1.licensing-qa.service.trade.gov.uk
+        ns1ip: 51.179.219.70
         ns2: ns2.licensing-dev.service.trade.gov.uk
-        ns2ip: 51.179.219.39
+        ns2ip: 51.179.219.75
         records:
           - name: ukbliteaom01
             type: A
-            content: 51.179.219.6
-          - name: permissions-finder
-            type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
-          - name: ogel-registration
-            type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+            content: 51.179.219.67
   roles: 
     - powerdns
   become: yes
