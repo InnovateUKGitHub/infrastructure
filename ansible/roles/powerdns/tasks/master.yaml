@@ -24,15 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Make an xfs filesystem on /dev/vdb
-  filesystem: fstype=xfs dev=/dev/vdb
-
-- name: Enter the mount point and mount powerdns-master-pv
-  mount: name=/mnt/powerdns-master-pv src=/dev/vdb fstype=xfs state=mounted
-
-- name: Change the owner of /mnt/powerdns-master-pv
-  file: path=/mnt/powerdns-master-pv mode='g+rw' setype=svirt_sandbox_file_t
-
 - name: Create the start script
   template: src=master-create.j2 dest=/bin/pdnscreate owner=1001 
             group=0 mode=0755

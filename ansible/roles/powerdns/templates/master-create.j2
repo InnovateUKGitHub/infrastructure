@@ -19,7 +19,7 @@ pdnsutil set-kind {{ domain.name }} master
 {% if domain.records is defined %}
 {% for record in domain.records %}
 pdnsutil add-record {{ domain.name }} {{ record.name }} {{ record.type }} \
-{{ record.content }} || /bin/true
+{{ record.content }}
 {% endfor %}
 {% endif %}
 {% endfor %}
