@@ -33,6 +33,12 @@
         ns2: ns2.licensing-dev.service.trade.gov.uk
         ns2ip: 51.179.219.39
         records:
+          - name: ukbliteep01
+            type: A
+            content: 51.179.219.74
+          - name: ukbliteext01
+            type: A
+            content: 51.179.219.66
           - name: ukbliteaom01
             type: A
             content: 51.179.219.6
