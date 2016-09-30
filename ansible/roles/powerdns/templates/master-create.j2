@@ -16,5 +16,11 @@ pdnsutil add-record {{ domain.name }} @ NS {{ domain.ns2 }}
 pdnsutil set-meta {{ domain.name }} ALLOW-AXFR-FROM AUTO-NS
 pdnsutil set-meta {{ domain.name }} ALLOW-AXFR-FROM $NS2_INTIP/32
 pdnsutil set-kind {{ domain.name }} master
+{% if domain.records is defined %}
+{% for record in domain.records %}
+pdnsutil add-record {{ domain.name }} {{ record.name }} {{ record.type }} \
+{{ record.content }} || /bin/true
+{% endfor %}
+{% endif %}
 {% endfor %}
 __EOF__
