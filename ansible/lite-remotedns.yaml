@@ -32,6 +32,16 @@
         ns1ip: 51.179.219.81
         ns2: ns2.licensing-uat.service.trade.gov.uk
         ns2ip: 51.179.219.82
-  roles: 
+        records:
+          - name: ukbliteep01
+            type: A
+            content: 51.179.219.85
+          - name: ukbliteext01
+            type: A
+            content: 51.179.219.65
+          - name: ukbliteaom01
+            type: A
+            content: 51.179.219.80
+  roles:
     - powerdns
   become: yes
