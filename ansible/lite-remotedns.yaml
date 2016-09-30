@@ -42,6 +42,9 @@
           - name: ogel-registration
             type: CNAME
             content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+          - name: search
+            type: CNAME
+            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
