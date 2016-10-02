@@ -73,11 +73,16 @@ $ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift
 ...
 $ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa lite-ipaserver.yaml
 ...
-$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-openshift.yaml
-``
+$ ansible-playbook -u vagrant -i hosts/lite-mgmt-openshift lite-openshift.yaml
+```
 
 Once you have created the environment, you will notice Kubernetes functions as
 a three-node cluster.
 
 ```
+[root@ukblitemom01 ~]# oc get nodes
+NAME                                              STATUS    AGE
+ukblitemom01.int.licensing.service.trade.gov.uk   Ready     17m
+ukblitemon01.int.licensing.service.trade.gov.uk   Ready     11m
+ukblitemon02.int.licensing.service.trade.gov.uk   Ready     11m
 ```
