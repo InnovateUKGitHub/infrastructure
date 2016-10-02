@@ -24,48 +24,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
+[OSEv3:children]
+masters
+nodes
 
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
+[OSEv3:vars]
+#ansible_ssh_user=cloud-user
+ansible_sudo=true
+deployment_type=openshift-enterprise
+containerized=true
+openshift_master_default_subdomain=app.int.licensing.service.trade.gov.uk
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
-- name: Start haveged
-  service: name=haveged state=started
+[masters]
+ukbeisaom01.int.licensing.service.trade.gov.uk openshift_hostname=ukbeisaom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeisaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
 
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
-
-- name: Remove hostname resolving to 127.0.0.1
-  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1\s+{{ ansible_hostname }}' 
-              state=absent
-
-- name: Insert IPA server hosts entry
-  lineinfile: dest=/etc/hosts regexp="^{{ hostvars[item]['ansible_host'] }}" 
-              line="{{ hostvars[item]['ansible_host'] }}\t{{ hostvars[item]['inventory_hostname'] }}\t{{ hostvars[item]['ansible_hostname'] }}"
-  with_items: groups['lite-mgmt-ipa']
-
-- include: primary.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - primary
-
-- include: replica.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-  tags:
-    - replica
-
-- include: dnsentries.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - dnsentries
+[nodes]
+ukbeisaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21 openshift_hostname=ukbeisaom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeisaom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukbeisaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22 openshift_hostname=ukbeisaon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeisaon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ukbeisaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23 openshift_hostname=ukbeisaon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeisaon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
