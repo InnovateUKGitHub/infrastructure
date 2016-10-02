@@ -70,8 +70,10 @@ $ vagrant group up mgmt
 ...
 $ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-platforms.yaml
 ...
-
-```
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa lite-ipaserver.yaml
+...
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-openshift.yaml
+``
 
 Once you have created the environment, you will notice Kubernetes functions as
 a three-node cluster.
