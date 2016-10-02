@@ -24,48 +24,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
+- hosts: localhost
+  roles: 
+  - cloudforms
 
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
-
-- name: Start haveged
-  service: name=haveged state=started
-
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
-
-- name: Remove hostname resolving to 127.0.0.1
-  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1\s+{{ ansible_hostname }}' 
-              state=absent
-
-- name: Insert IPA server hosts entry
-  lineinfile: dest=/etc/hosts regexp="^{{ hostvars[item]['ansible_host'] }}" 
-              line="{{ hostvars[item]['ansible_host'] }}\t{{ hostvars[item]['inventory_hostname'] }}\t{{ hostvars[item]['ansible_hostname'] }}"
-  with_items: groups['lite-mgmt-ipa']
-
-- include: primary.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - primary
-
-- include: replica.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-  tags:
-    - replica
-
-- include: dnsentries.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - dnsentries
+- hosts: beis-mgmt-ipa
+  tasks:
+  - name: Create DNS entries for CloudForms master node
+    shell:
+      kinit admin -k -t {{ ipaserver_keytab }} ;
+      hname={{ item }} ;
+      ip_addr={{ hostvars[item]['ansible_host'] }} ;
+      ipa dnsrecord-add int.licensing.service.trade.gov.uk ${hname%%.*} --a-rec $ip_addr >>
+        /root/ipa_{{ item }}.log ;
+      ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
+        /root/ipa_{{ item }}.log ;
+    args:
+      executable: /bin/bash
+      creates: /root/ipa_{{ item }}.log
+    with_items:
+      - "{{ groups['beis-mgmt-cloudforms'] }}"
+    when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
+    become: yes

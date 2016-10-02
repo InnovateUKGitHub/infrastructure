@@ -24,48 +24,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
+[beis-ras]
+ukbeisep01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.11
 
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
+[beis-ns]
+ukbeisns01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.21 dnsrole=master
+ukbeisns02.int.licensing.service.trade.gov.uk ansible_host=10.100.254.22 dnsrole=slave
 
-- name: Start haveged
-  service: name=haveged state=started
+[beis-mgmt]
 
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
+[beis-mgmt-ipa]
+ukbeisipa01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.11 iparole=primary
+ukbeisipa02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.12 iparole=replica
 
-- name: Remove hostname resolving to 127.0.0.1
-  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1\s+{{ ansible_hostname }}' 
-              state=absent
+[beis-mgmt-openshift]
+ukbeismom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21
+ukbeismon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22
+ukbeismon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23
 
-- name: Insert IPA server hosts entry
-  lineinfile: dest=/etc/hosts regexp="^{{ hostvars[item]['ansible_host'] }}" 
-              line="{{ hostvars[item]['ansible_host'] }}\t{{ hostvars[item]['inventory_hostname'] }}\t{{ hostvars[item]['ansible_hostname'] }}"
-  with_items: groups['lite-mgmt-ipa']
+[beis-app-openshift]
+ukbeisaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
+ukbeisaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22
+ukbeisaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
 
-- include: primary.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - primary
+[beis:children]
+beis-ras
+beis-ns
+beis-mgmt
+beis-mgmt-ipa
+beis-mgmt-openshift
+beis-app-openshift
 
-- include: replica.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-  tags:
-    - replica
-
-- include: dnsentries.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - dnsentries
+[beis:vars]
+ansible_sudo=true
