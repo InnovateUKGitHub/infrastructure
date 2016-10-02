@@ -67,10 +67,14 @@ By default, commands are directed toward the Kubernetes master box. Therefore,
 Vagrant ssh access does not need to be specified to the master.
 
 ```
-$ vagrant group up k8s
+$ vagrant group up mgmt
 ...
-$ vagrant ssh
-```
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-platforms.yaml
+...
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa lite-ipaserver.yaml
+...
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-openshift.yaml
+``
 
 Once you have created the environment, you will notice Kubernetes functions as
 a three-node cluster.
