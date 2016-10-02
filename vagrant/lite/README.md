@@ -66,25 +66,15 @@ By default, commands are directed toward the Kubernetes master box. Therefore,
 Vagrant ssh access does not need to be specified to the master.
 
 ```
-$ vagrant group up k8s
+$ vagrant group up mgmt
 ...
-$ vagrant ssh
+$ ansible-playbook -u vagrant -i hosts/lite -l lite-mgmt-ipa,lite-mgmt-openshift lite-platforms.yaml
+...
+
 ```
 
 Once you have created the environment, you will notice Kubernetes functions as
 a three-node cluster.
 
 ```
-[vagrant@k8smaster ~]$ kubectl get nodes
-NAME                                  STATUS    AGE
-k8snode1.devcluster.lite.bis.gov.uk   Ready     1h
-k8snode2.devcluster.lite.bis.gov.uk   Ready     1h
-[vagrant@k8smaster ~]$ sudo docker ps
-CONTAINER ID        IMAGE                                                        COMMAND                  CREATED             STATUS              PORTS               NAMES
-10406d168d73        rhel7/kubernetes-controller-mgr                              "/usr/bin/kube-contro"   About an hour ago   Up About an hour                        k8s_kube-controller-manager.d31bb258_kube-controller-manager-k8smaster.devcluster.lite.bis.gov.uk_default_3ae86699b27fd8cffb9e684a58c50f34_f8bcdd3b
-1d0b653527b3        rhel7/kubernetes-apiserver                                   "/usr/bin/kube-apiser"   About an hour ago   Up About an hour                        k8s_kube-apiserver.d37747b4_kube-apiserver-k8smaster.devcluster.lite.bis.gov.uk_default_e94cd7ca5c14ffadec853314a548908c_1597fda4
-64beb9c1667a        rhel7/kubernetes-scheduler                                   "/usr/bin/kube-schedu"   About an hour ago   Up About an hour                        k8s_kube-scheduler.5a889386_kube-scheduler-k8smaster.devcluster.lite.bis.gov.uk_default_b3fb728e5d7bf5e5f8e0dbb1d35d4a01_370e7219
-7f344ee74454        registry.access.redhat.com/rhel7/pod-infrastructure:latest   "/pod"                   About an hour ago   Up About an hour                        k8s_POD.ae8ee9ac_kube-apiserver-k8smaster.devcluster.lite.bis.gov.uk_default_e94cd7ca5c14ffadec853314a548908c_cf0f7db8
-50058bfc618e        registry.access.redhat.com/rhel7/pod-infrastructure:latest   "/pod"                   About an hour ago   Up About an hour                        k8s_POD.ae8ee9ac_kube-scheduler-k8smaster.devcluster.lite.bis.gov.uk_default_b3fb728e5d7bf5e5f8e0dbb1d35d4a01_56a22389
-5fe40a76b6fb        registry.access.redhat.com/rhel7/pod-infrastructure:latest   "/pod"                   About an hour ago   Up About an hour                        k8s_POD.ae8ee9ac_kube-controller-manager-k8smaster.devcluster.lite.bis.gov.uk_default_3ae86699b27fd8cffb9e684a58c50f34_32c18550
 ```
