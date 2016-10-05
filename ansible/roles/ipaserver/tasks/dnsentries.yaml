@@ -40,7 +40,7 @@
     kinit admin -k -t {{ ipaserver_keytab }} ;
     ipa dnsrecord-add {{ ipaserver_domain }} {{ item }}. --a-rec \
       {{ hostvars[item]['ansible_host'] }}
-  with_inventory_hostnames: lite
+  with_inventory_hostnames: beis
   register: arecords_result
   failed_when: "arecords_result.rc != 0 and 'no modifications to be performed' \
                 not in arecords_result.stderr and 'already exists' not in \

@@ -24,42 +24,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- hosts: beis-mgmt-ipa
-  vars_prompt:
-    - name: "ipaserver_admin_password"
-      prompt: "Enter IPA server admin password"
-      private: yes
-    - name: "ipaserver_dir_mgmt_password"
-      prompt: "Enter IPA server directory manager password"
-      private: yes
-  roles:
-    - ipaserver
-  become: yes
+- include: master.yaml
+  when: inventory_hostname in groups['masters']
 
-- hosts: beis-mgmt-ipa
-  tasks:
-  - name: Create DNS entries for app OpenShift nodes
-    shell:
-      kinit admin -k -t {{ ipaserver_keytab }} ;
-      hname={{ item }} ;
-      ip_addr={{ hostvars[item]['ansible_host'] }} ;
-      ipa dnsrecord-add int.licensing.service.trade.gov.uk ${hname%%.*} --a-rec $ip_addr >>
-        /root/ipa_{{ item }}.log ;
-      ipa dnsrecord-add 1.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
-        /root/ipa_{{ item }}.log ;
-    args:
-      executable: /bin/bash
-      creates: /root/ipa_{{ item }}.log
-    with_items:
-      - "{{ groups['beis-app-openshift'] }}"
-    when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-    become: yes
-
-- hosts: beis-ras
-#  remote_user: cloud-user
-  tasks:
-  - name: Manually update /etc/resolv.conf to use internal DNS
-    copy:
-      src=files/resolv.conf dest=/etc/resolv.conf
-    become: true
-
+- include: node.yaml
+  when: inventory_hostname in groups['nodes']
