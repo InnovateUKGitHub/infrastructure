@@ -51,12 +51,12 @@
   - IPv4
   - IPv6
 
-- name: Allow vpn tcp:9700 ingress
+- name: Allow vpn https ingress
   os_security_group_rule:
     security_group: vpn
     protocol: tcp
-    port_range_min: 9700
-    port_range_max: 9700
+    port_range_min: 443
+    port_range_max: 443
     remote_ip_prefix: "{{ item }}"
   with_items:
   - 193.240.0.0/16
@@ -64,11 +64,10 @@
   - 94.119.0.0/16
   - 80.235.133.135/32
 
-- name: Allow vpn tcp:1194 egress to 0.0.0.0/0
+- name: Allow vpn tcp:1194 ingress to 0.0.0.0/0
   os_security_group_rule:
     security_group: vpn
     protocol: udp
-    direction: egress
     port_range_min: 1194
     port_range_max: 1194
     remote_ip_prefix: 0.0.0.0/0
