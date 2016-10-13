@@ -114,7 +114,7 @@ objects:
   metadata:
     labels:
       app: jenkins
-    name: jenkins
+    name: jenkins-master-s2i
   spec:
     replicas: 1
     selector:
