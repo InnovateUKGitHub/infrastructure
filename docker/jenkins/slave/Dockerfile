@@ -12,7 +12,7 @@ RUN curl -o /etc/yum.repos.d/bintray-sbt-rpm.repo https://bintray.com/sbt/rpm/rp
     yum-config-manager --enable rhel-server-rhscl-7-rpms && \
     yum-config-manager --enable rhel-7-server-eus-rpms && \
     yum-config-manager --enable rhel-7-server-eus-supplementary-rpms && \
-    yum-config-manager --enable rhel-7-server-ose-3.2-rpms && \
+    yum-config-manager --enable rhel-7-server-ose-3.3-rpms && \
     export INSTALL_PKGS="nss_wrapper gettext tar git rh-maven33 unzip" && \
     export INSTALL_PKGS="atomic-openshift-clients sbt $INSTALL_PKGS" && \
     yum makecache && \
