@@ -47,6 +47,11 @@ ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
 ukbliteaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22
 ukbliteaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
 
+[lite-svc-openshift]
+ukblitesom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21
+ukbliteson01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.22
+ukbliteson02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.23
+
 [lite:children]
 lite-ras
 lite-ns
@@ -54,6 +59,7 @@ lite-mgmt
 lite-mgmt-ipa
 lite-mgmt-openshift
 lite-app-openshift
+lite-svc-openshift
 
 [lite:vars]
 ansible_sudo=true
