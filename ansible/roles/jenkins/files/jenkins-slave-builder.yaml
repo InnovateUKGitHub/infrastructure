@@ -26,7 +26,7 @@ parameters:
 - description: The sub-directory inside the repository.
   displayName: Context Directory
   name: SLAVE_REPO_CONTEXTDIR
-  value: jenkins/slave
+  value: docker/jenkins/slave
 - description: The git ref or tag to use for customization.
   displayName: Git Reference
   name: SLAVE_REPO_REF
