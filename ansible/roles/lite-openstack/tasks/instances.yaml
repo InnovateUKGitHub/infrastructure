@@ -39,6 +39,7 @@
       - port-name: dmzport11
     meta:
       hostname: ukbliteep01.int.licensing.service.trade.gov.uk
+  ignore_errors: yes
 
 - name: Create external dns master server
   os_server:
@@ -57,6 +58,7 @@
       hostname: 'ukblitens01.int.licensing.service.trade.gov.uk'
     volumes:
       - powerdns-master-pv
+  ignore_errors: yes
 
 - name: Create external dns slave server
   os_server:
@@ -73,6 +75,7 @@
       - port-name: dmzport22
     meta:
       hostname: 'ukblitens02.int.licensing.service.trade.gov.uk'
+  ignore_errors: yes
 
 - name: Create IPA servers
   os_server:
@@ -93,6 +96,7 @@
   with_items:
     - { name: 'ukbliteipa01.int.licensing.service.trade.gov.uk', count: 1 }
     - { name: 'ukbliteipa02.int.licensing.service.trade.gov.uk', count: 2 }
+  ignore_errors: yes
 
 - name: Create management OpenShift instances
   os_server:
@@ -110,6 +114,7 @@
     - { name: 'ukblitemom01.int.licensing.service.trade.gov.uk', count: 1 }
     - { name: 'ukblitemon01.int.licensing.service.trade.gov.uk', count: 2 }
     - { name: 'ukblitemon02.int.licensing.service.trade.gov.uk', count: 3 }
+  ignore_errors: yes
 
 - name: Create app OpenShift instances
   os_server:
@@ -127,3 +132,4 @@
     - { name: 'ukbliteaom01.int.licensing.service.trade.gov.uk', count: 1 }
     - { name: 'ukbliteaon01.int.licensing.service.trade.gov.uk', count: 2 }
     - { name: 'ukbliteaon02.int.licensing.service.trade.gov.uk', count: 3 }
+  ignore_errors: yes
