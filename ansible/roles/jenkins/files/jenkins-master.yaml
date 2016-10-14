@@ -9,6 +9,7 @@ metadata:
     description: Creates a Jenkins master using S2I for installing plugins and configuring Jenkins
     iconClass: icon-jenkins
     tags: instant-app,jenkins
+    openshift.io/scc: privileged
   name: jenkins-master-s2i
 parameters:
 - description: Git source URI for Jenkins S2I
@@ -59,7 +60,7 @@ objects:
       protocol: TCP
       targetPort: 50000
     selector:
-      app: jenkins
+      app: jenkins-master-s2i
       deploymentconfig: jenkins
     sessionAffinity: None
     type: ClusterIP
@@ -114,18 +115,18 @@ objects:
   metadata:
     labels:
       app: jenkins
-    name: jenkins-master-s2i
+    name: jenkins
   spec:
     replicas: 1
     selector:
-      app: jenkins
+      app: jenkins-master-s2i
       deploymentconfig: jenkins
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          app: jenkins
+          app: jenkins-master-s2i
           deploymentconfig: jenkins
       spec:
         containers:
