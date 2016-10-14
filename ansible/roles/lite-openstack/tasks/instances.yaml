@@ -133,3 +133,21 @@
     - { name: 'ukbliteaon01.int.licensing.service.trade.gov.uk', count: 2 }
     - { name: 'ukbliteaon02.int.licensing.service.trade.gov.uk', count: 3 }
   ignore_errors: yes
+
+- name: Create svc OpenShift instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukblitesom01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukbliteson01.int.licensing.service.trade.gov.uk', count: 2 }
+    - { name: 'ukbliteson02.int.licensing.service.trade.gov.uk', count: 3 }
+  ignore_errors: yes
