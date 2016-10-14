@@ -51,12 +51,12 @@
   - IPv4
   - IPv6
 
-- name: Allow vpn tcp:9700 ingress
+- name: Allow vpn tcp:443 ingress
   os_security_group_rule:
     security_group: vpn
     protocol: tcp
-    port_range_min: 9700
-    port_range_max: 9700
+    port_range_min: 443
+    port_range_max: 443
     remote_ip_prefix: "{{ item }}"
   with_items:
   - 193.240.0.0/16
@@ -64,11 +64,10 @@
   - 94.119.0.0/16
   - 80.235.133.135/32
 
-- name: Allow vpn tcp:1194 egress to 0.0.0.0/0
+- name: Allow vpn udp:1194 ingress from 0.0.0.0/0
   os_security_group_rule:
     security_group: vpn
     protocol: udp
-    direction: egress
     port_range_min: 1194
     port_range_max: 1194
     remote_ip_prefix: 0.0.0.0/0
@@ -232,6 +231,35 @@
   with_items:
   - tcp
   - udp
+
+##### Svc Nodes #####
+
+- name: Create svc_nodes security group
+  os_security_group:
+    name=svc_nodes
+    description="Traffic for svc enclave nodes"
+
+- name: Remove default egress allowed from svc group
+  os_security_group_rule:
+    state: absent
+    security_group: svc_nodes
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  os_security_group_rule:
+    security_group: svc_nodes
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
 
 ##### Mgmt Nodes #####
 
@@ -482,5 +510,107 @@
     port_range_min: "{{ item | int }}"
     port_range_max: "{{ item | int }}"
     remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 4789
+
+##### OpenShift Svc Master #####
+
+- name: Create svc OpenShift master group
+  os_security_group:
+    name=svc_openshift_master
+    description="Traffic for svc enclave OpenShift master"
+
+- name: Remove default egress allowed from svc_openshift_master group
+  os_security_group_rule:
+    state: absent
+    security_group: svc_openshift_master
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow remote access to svc OpenShift master:tcp ports from svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 80
+  - 8443
+  - 9090
+
+- name: Allow remote access to svc OpenShift master:tcp ports from app
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 80
+  - 8443
+
+- name: Allow specific tcp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 2379
+  - 2380
+  - 4194
+  - 8080
+  - 10250
+
+- name: Allow specific tcp and udp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: "{{ item[0] }}"
+    port_range_min: "{{ item[1] | int }}"
+    port_range_max: "{{ item[1] | int }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_nested:
+  - [ 'tcp', 'udp' ]
+  - [ 8053, 24224 ]
+
+##### Openshift Svc Node #####
+
+- name: Create svc OpenShift node group
+  os_security_group:
+    name=svc_openshift_node
+    description="Traffic for svc enclave OpenShift node"
+
+- name: Remove default egress allowed from svc_openshift_node group
+  os_security_group_rule:
+    state: absent
+    security_group: svc_openshift_node
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow specific tcp ports to OpenShift node from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_node
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 10250
+
+- name: Allow specific udp ports to OpenShift node from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_node
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.20.0/24
   with_items:
   - 4789
