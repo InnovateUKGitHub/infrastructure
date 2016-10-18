@@ -434,20 +434,15 @@
   - 8080
   - 10250
 
-#- name: Allow specific tcp ports to OpenShift master from the app compartment
-#  os_security_group_rule:
-#    security_group: app_openshift_master
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.1.0/24
-#  with_items:
-#  - 2379
-#  - 4194
-#  - 8080
-#  - 10250
-#  - 10255
-#  - 33818
+- name: Allow specific udp to OpenShift master from the app compartment
+  os_security_group_rule:
+    security_group: app_openshift_master
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 4789
 
 - name: Allow specific tcp and udp to OpenShift master from the app compartment
   os_security_group_rule:
@@ -476,22 +471,6 @@
   with_items:
   - IPv4
   - IPv6
-
-#- name: Allow specific tcp ports to OpenShift node from the app compartment
-#  os_security_group_rule:
-#    security_group: app_openshift_node
-#    protocol: tcp
-#    port_range_min: "{{ item }}"
-#    port_range_max: "{{ item }}"
-#    remote_ip_prefix: 10.100.1.0/24
-#  with_items:
-#  - 4194
-#  - 8080
-#  - 10250
-#  - 10255
-#  - 38301
-#  - 38419
-#  - 51799
 
 - name: Allow specific tcp ports to OpenShift node from the app compartment
   os_security_group_rule:
@@ -566,6 +545,16 @@
   - 4194
   - 8080
   - 10250
+
+- name: Allow specific udp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 4789
 
 - name: Allow specific tcp and udp to OpenShift master from the svc compartment
   os_security_group_rule:
