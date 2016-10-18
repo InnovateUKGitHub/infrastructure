@@ -113,4 +113,31 @@
       - app_nodes
       - remote_repositories
       - app_openshift_node
-  with_sequence: count=4
+  with_sequence: count=2
+
+# SVC ports
+- name: Create a port for the svc OpenShift master
+  os_port:
+    state: present
+    name: svcport2{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.2{{ item }}
+    security_groups:
+      - svc_nodes
+      - remote_repositories
+      - svc_openshift_master
+  with_sequence: count=3
+
+- name: Create a port for the svc OpenShift nodes
+  os_port:
+    state: present
+    name: svcport5{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.5{{ item }}
+    security_groups:
+      - svc_nodes
+      - remote_repositories
+      - svc_openshift_node
+  with_sequence: count=2

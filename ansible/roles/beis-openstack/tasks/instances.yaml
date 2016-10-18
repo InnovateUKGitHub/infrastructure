@@ -126,8 +126,6 @@
   with_items:
     - { name: 'ukbeisaon01.int.licensing.service.trade.gov.uk', count: 1 }
     - { name: 'ukbeisaon02.int.licensing.service.trade.gov.uk', count: 2 }
-    - { name: 'ukbeisaon03.int.licensing.service.trade.gov.uk', count: 3 }
-    - { name: 'ukbeisaon04.int.licensing.service.trade.gov.uk', count: 4 }
 
 - name: Create app haproxy instances
   os_server:
@@ -144,3 +142,36 @@
   with_items:
     - { name: 'ukbeisalb01.int.licensing.service.trade.gov.uk', count: 5 }
     - { name: 'ukbeisalb02.int.licensing.service.trade.gov.uk', count: 6 }
+
+- name: Create svc OpenShift master instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeissom01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukbeissom02.int.licensing.service.trade.gov.uk', count: 2 }
+    - { name: 'ukbeissom03.int.licensing.service.trade.gov.uk', count: 3 }
+
+- name: Create svc OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport5{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisson01.int.licensing.service.trade.gov.uk', count: 1 }
+    - { name: 'ukbeisson02.int.licensing.service.trade.gov.uk', count: 2 }
