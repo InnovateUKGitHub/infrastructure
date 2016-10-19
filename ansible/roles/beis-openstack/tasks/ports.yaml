@@ -83,7 +83,7 @@
     fixed_ips:
       - ip_address: 10.100.1.{{ item }}
     security_groups:
-      - loadbalancer_nodes
+      - app_loadbalancer_nodes
       - app_nodes
       - remote_repositories
   with_sequence: start=5 count=2

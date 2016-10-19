@@ -194,15 +194,15 @@
 
 ##### Load Balancer Nodes #####
 
-- name: Create loadbalancer_nodes security group
+- name: Create app_loadbalancer_nodes security group
   os_security_group:
-    name=loadbalancer_nodes
+    name=app_loadbalancer_nodes
     description="Internet traffic to app nodes"
 
-- name: Remove default egress allowed from loadbalancer_nodes group
+- name: Remove default egress allowed from app_loadbalancer_nodes group
   os_security_group_rule:
     state: absent
-    security_group: loadbalancer_nodes
+    security_group: app_loadbalancer_nodes
     ethertype: "{{ item }}"
     direction: egress
   with_items:
@@ -211,7 +211,7 @@
 
 - name: Allow tcp from the internet to the app compartment
   os_security_group_rule:
-    security_group: loadbalancer_nodes
+    security_group: app_loadbalancer_nodes
     protocol: tcp
     port_range_min: "{{ item }}"
     port_range_max: "{{ item }}"
