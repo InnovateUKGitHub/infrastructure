@@ -31,10 +31,10 @@
 #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.69"'
 
 # LITE UAT
-#ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.85"'
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.85"'
 
 # BEIS Production
-ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.105"'
+#ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.105"'
 
 # Vagrant
 #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q -p2222 vagrant@127.0.0.1"'
