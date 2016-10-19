@@ -24,22 +24,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[OSEv3:children]
-masters
-nodes
-
-[OSEv3:vars]
-#ansible_ssh_user=cloud-user
-ansible_sudo=true
-deployment_type=openshift-enterprise
-containerized=true
-openshift_master_default_subdomain=app.int.licensing.service.trade.gov.uk
-openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
-
-[masters]
-ukbliteaom01.int.licensing.service.trade.gov.uk openshift_hostname=ukbliteaom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
-
-[nodes]
-ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21 openshift_hostname=ukbliteaom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbliteaom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukbliteaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22 openshift_hostname=ukbliteaon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbliteaon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukbliteaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23 openshift_hostname=ukbliteaon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbliteaon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+- hosts: beis-ns
+  vars:
+    domains:
+      - name: licensing.service.trade.gov.uk
+        ns1: ns1.licensing-uat.service.trade.gov.uk
+        ns1ip: 51.179.219.102
+        ns2: ns2.licensing.service.trade.gov.uk
+        ns2ip: 51.179.219.103
+        records:
+          - name: ukbeisep01
+            type: A
+            content: 51.179.219.105
+          - name: ukbeisalb
+            type: A
+            content: 51.179.219.107
+  roles: 
+    - powerdns
+  become: yes

@@ -24,36 +24,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[lite-ras]
-ukbliteep01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.11
+- hosts: masters:nodes
+  vars:
+    openstack_auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+    openstack_username: "{{ lookup('env', 'OS_USERNAME') }}"
+    openstack_tenantid: "{{ lookup('env', 'OS_TENANT_ID') }}"
+    openstack_region: "{{ lookup('env', 'OS_REGION_NAME') }}"
+    openstack_password: "{{ lookup('env', 'OS_PASSWORD') }}"
+  roles:
+    - jenkins
+  become: yes
 
-[lite-ns]
-ukblitens01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.21 dnsrole=master
-ukblitens02.int.licensing.service.trade.gov.uk ansible_host=10.100.254.22 dnsrole=slave
-
-[lite-mgmt]
-
-[lite-mgmt-ipa]
-ukbliteipa01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.11 iparole=primary
-ukbliteipa02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.12 iparole=replica
-
-[lite-mgmt-openshift]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21
-ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22
-ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23
-
-[lite-app-openshift]
-ukbliteaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
-ukbliteaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22
-ukbliteaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
-
-[lite:children]
-lite-ras
-lite-ns
-lite-mgmt
-lite-mgmt-ipa
-lite-mgmt-openshift
-lite-app-openshift
-
-[lite:vars]
-ansible_sudo=true

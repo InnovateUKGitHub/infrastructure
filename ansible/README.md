@@ -14,23 +14,39 @@ The following command will build an entire OpenStack environment including all
 the aforementioned pieces running RHEL7. They will be accessible via a golden
 host through ssh.
 
-`$ ansible-playbook -i hosts/lite lite-openstack.yaml`
+`$ ansible-playbook -i hosts/beis beis-openstack.yaml`
 
 ### Red Hat 
 In order to update the systems and install additional software, each platform
 needs registering at the Red Hat Developer Community. 
 `http://developers.redhat.com`
 
-`$ ansible-playbook -i hosts/lite -u cloud-user lite-platforms.yaml`
+`$ ansible-playbook -i hosts/beis -u cloud-user beis-platforms.yaml`
 
 ### IPA
 
-The `lite-ipaserver.yaml` playbook will also install IPA server in a master -
+The `beis-ipaserver.yaml` playbook will also install IPA server in a master -
 replica configuration. The build will ask for two passwords, and these are
 used to set the passwords for the build, so generate a password or two and
 jot them down. 
 
-`$ ansible-playbook -i hosts/lite -u cloud-user lite-ipaserver.yaml`
+`$ ansible-playbook -i hosts/beis -u cloud-user beis-ipaserver.yaml`
+
+## OpenStack
+After you have got to this point, you need to change some OpenStack parameters.
+
+```
+$ ansible-playbook -i hosts/beis beis-openstack2.yaml
+```
+
+## External DNS
+If you need external, or remote, DNS, a convenient PowerDNS container exists on
+Docker Hub. A playbook has been created to configure the container as it is
+100% ephemeral by design in master/slave configuration.
+
+```
+$ ansible-playbook -u cloud-user -i hosts/beis beis-remotedns.yaml
+````
 
 ### OpenShift
 In order to build the OpenShift cluster environments, it is necessary to check
@@ -38,33 +54,12 @@ out the `https://github.com/openshift/openshift-ansible` repo alongside this
 repo. The path in the `ansible.cfg` file included in this directory assumes
 they are checked out in the `~/repo/` directory.
 
-After you have checked out openshift-ansible.git, the following patch is
-necessary for a successful run if you are not using a regular install:
-
-```
-$ git diff roles/openshift_facts/library/openshift_facts.py
-diff --git a/roles/openshift_facts/library/openshift_facts.py b/roles/openshift_facts/library/openshift_facts.py
-index 31e7096..eeaed0d 100755
---- a/roles/openshift_facts/library/openshift_facts.py
-+++ b/roles/openshift_facts/library/openshift_facts.py
-@@ -2108,7 +2108,8 @@ def main():
-     openshift_env_structures = module.params['openshift_env_structures']
-     protected_facts_to_overwrite = module.params['protected_facts_to_overwrite']
-
--    fact_file = '/etc/ansible/facts.d/openshift.fact'
-+    #fact_file = '/etc/ansible/facts.d/openshift.fact'
-+    fact_file = os.getcwd() + '/openshift.fact'
-
-     openshift_facts = OpenShiftFacts(role,
-                                      fact_file,
-```
-
-`$ ansible-playbook -i hosts/lite-mgmt_openshift lite-openshift.yaml`
+`$ ansible-playbook -i hosts/beis-mgmt_openshift beis-openshift.yaml`
 
 After the above command, there will be a three-node cluster running in the
 mgmt network.
 
-`$ ansible-playbook -i hosts/lite-app_openshift lite-openshift.yaml`
+`$ ansible-playbook -i hosts/beis-app_openshift beis-openshift.yaml`
 
 After the above cammand, there will be a three-node cluster running in the 
 app network.
