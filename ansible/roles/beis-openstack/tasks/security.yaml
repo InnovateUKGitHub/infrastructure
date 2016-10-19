@@ -249,17 +249,6 @@
   - ingress
   - egress
 
-- name: Allow app_nodes all ingress from app1subnet
-  os_security_group_rule:
-    security_group: app_nodes
-    protocol: "{{ item }}"
-    port_range_min: 1
-    port_range_max: 65535
-    remote_ip_prefix: 10.100.1.0/24
-  with_items:
-  - tcp
-  - udp
-
 ##### Mgmt Nodes #####
 
 - name: Create mgmt security group
@@ -390,6 +379,35 @@
     remote_ip_prefix: 10.100.1.0/24
   with_items:
   - 4789
+
+##### Svc Nodes #####
+
+- name: Create svc_nodes security group
+  os_security_group:
+    name=svc_nodes
+    description="Traffic for svc enclave nodes"
+
+- name: Remove default egress allowed from svc_nodes group
+  os_security_group_rule:
+    state: absent
+    security_group: svc_nodes
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  os_security_group_rule:
+    security_group: svc_nodes
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
 
 ##### OpenShift Svc Master #####
 

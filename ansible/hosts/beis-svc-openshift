@@ -32,6 +32,10 @@ nodes
 ansible_sudo=true
 deployment_type=openshift-enterprise
 containerized=true
+openshift_clock_enabled=true
+os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
+openshift_use_openshift_sdn=False
+
 openshift_master_default_subdomain=svc.int.licensing.service.trade.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 

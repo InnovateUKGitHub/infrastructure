@@ -35,6 +35,8 @@ ansible_sudo=true
 deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
+os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
+openshift_use_openshift_sdn=False
 
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=ukbeisalb01.int.licensing.service.trade.gov.uk
