@@ -24,23 +24,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[OSEv3:children]
-masters
-nodes
+- name: Create OpenShift node's OpenStack config
+  template: src=cloud.conf.j2 dest=/etc/origin/node/cloud.conf
 
-[OSEv3:vars]
-#ansible_ssh_user=cloud-user
-ansible_become=true
-ansible_sudo=true
-deployment_type=openshift-enterprise
-containerized=true
-openshift_master_default_subdomain=mgmt.int.licensing.service.trade.gov.uk
-openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+- name: Update the OpenShift node-config.yaml
+  blockinfile:
+    dest: /etc/origin/node/node-config.yaml kubeletArguments
+    insertafter: "kubeletArguments:"
+    block: |
+        cloud-provider:
+          - "openstack"
+        cloud-config:
+          - "/etc/origin/node/cloud.conf"
 
-[masters]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk
-
-[nodes]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22 openshift_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23 openshift_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+- name: Restart the OpenShift node
+  service: name=atomic-openshift-node state=restarted

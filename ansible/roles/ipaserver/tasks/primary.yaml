@@ -86,7 +86,7 @@
     executable: /bin/bash
     creates: /root/ipa_replicas.log
   with_items:
-    - "{{ groups['lite-mgmt-ipa'] }}"
+    - "{{ groups['beis-mgmt-ipa'] }}"
   when: hostvars[item]['iparole'] == "replica"
 
 - name: Fetch files from primary ipa server
@@ -100,5 +100,5 @@
   fetch: src=/var/lib/ipa/replica-info-{{ item }}.gpg
          dest=/tmp/replica-info-{{ item }}.gpg flat=yes
   with_items:
-    - "{{ groups['lite-mgmt-ipa'] }}"
+    - "{{ groups['beis-mgmt-ipa'] }}"
   when: hostvars[item]['iparole'] == "replica"

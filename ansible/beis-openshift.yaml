@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- hosts: all
+- hosts: OSEv3
   tasks:
   - name: Detecting Operating System
     stat:
@@ -105,8 +105,11 @@
       sed -i 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
       /etc/origin/master/master-config.yaml
     when: "'masters' in group_names"
-  - name: Restart atomic-openshift-master
-    service: name=atomic-openshift-master state=restarted enabled=yes
+  - name: Restart atomic-openshift-master-api
+    service: name=atomic-openshift-master-api state=restarted enabled=yes
+    when: "'masters' in group_names"
+  - name: Restart atomic-openshift-master-controllers
+    service: name=atomic-openshift-master-controllers state=restarted enabled=yes
     when: "'masters' in group_names"
   - name: Create user admin
     command: htpasswd -b /etc/origin/master/htpasswd admin admin

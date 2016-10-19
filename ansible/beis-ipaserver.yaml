@@ -38,22 +38,6 @@
 
 - hosts: beis-mgmt-ipa
   tasks:
-  - name: Create DNS entries for mgmt OpenShift nodes
-    shell:
-      kinit admin -k -t {{ ipaserver_keytab }} ;
-      hname={{ item }} ;
-      ip_addr={{ hostvars[item]['ansible_host'] }} ;
-      ipa dnsrecord-add int.licensing.service.trade.gov.uk ${hname%%.*} --a-rec $ip_addr >>
-        /root/ipa_{{ item }}.log ;
-      ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
-        /root/ipa_{{ item }}.log ;
-    args:
-      executable: /bin/bash
-      creates: /root/ipa_{{ item }}.log
-    with_items:
-      - "{{ groups['beis-mgmt-openshift'] }}"
-    when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-    become: yes
   - name: Create DNS entries for app OpenShift nodes
     shell:
       kinit admin -k -t {{ ipaserver_keytab }} ;
