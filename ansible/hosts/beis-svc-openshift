@@ -26,6 +26,7 @@
 
 [OSEv3:children]
 masters
+etcd
 nodes
 
 [OSEv3:vars]
@@ -44,6 +45,11 @@ openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 
 ukbeissom01.int.licensing.service.trade.gov.uk openshift_hostname=ukbeissom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21
 ukbeissom02.int.licensing.service.trade.gov.uk openshift_hostname=ukbeissom02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.22
 ukbeissom03.int.licensing.service.trade.gov.uk openshift_hostname=ukbeissom03.int.licensing.service.trade.gov.uk ansible_host=10.100.20.23
+
+[etcd]
+ukbeissom01.int.licensing.service.trade.gov.uk
+ukbeissom02.int.licensing.service.trade.gov.uk
+ukbeissom03.int.licensing.service.trade.gov.uk
 
 [nodes]
 ukbeissom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21 openshift_hostname=ukbeissom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
