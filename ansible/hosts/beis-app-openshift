@@ -68,5 +68,3 @@ ukbeisaom03.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23 openshif
 
 ukbeisaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.51 openshift_hostname=ukbeisaon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'lite', 'zone': 'corsham1'}"
 ukbeisaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.52 openshift_hostname=ukbeisaon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'lite', 'zone': 'corsham1'}"
-ukbeisaon03.int.licensing.service.trade.gov.uk ansible_host=10.100.1.53 openshift_hostname=ukbeisaon03.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'lite', 'zone': 'corsham1'}"
-ukbeisaon04.int.licensing.service.trade.gov.uk ansible_host=10.100.1.54 openshift_hostname=ukbeisaon04.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'lite', 'zone': 'corsham1'}"
