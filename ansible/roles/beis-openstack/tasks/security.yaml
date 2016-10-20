@@ -220,6 +220,16 @@
   - 80
   - 443
 
+- name: Allow tcp from the compartment to the app loadbalancers
+  os_security_group_rule:
+    security_group: app_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - 8443
+
 ##### App Nodes #####
 
 - name: Create app_nodes security group
