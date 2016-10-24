@@ -55,11 +55,12 @@
     when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
     become: yes
 
-- hosts: beis-ras
-#  remote_user: cloud-user
+- hosts: all
   tasks:
   - name: Manually update /etc/resolv.conf to use internal DNS
     copy:
       src=files/resolv.conf dest=/etc/resolv.conf
-    become: true
+  become: yes
+  tags:
+    - resolv
 
