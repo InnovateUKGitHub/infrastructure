@@ -45,7 +45,13 @@
 
 - include: master.yaml
   when: "{{ hostvars[inventory_hostname]['dnsrole'] == 'master' }}"
+  tags:
+    - master
+    - update
 
 - include: slave.yaml
   when: "{{ hostvars[inventory_hostname]['dnsrole'] == 'slave' }}"
+  tags:
+    - slave
+    - update
   
