@@ -51,6 +51,9 @@
           - name: search
             type: CNAME
             content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+          - name: lite-prototype
+            type: CNAME
+            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
