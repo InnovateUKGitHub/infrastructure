@@ -27,21 +27,21 @@
 - hosts: beis-ns
   vars:
     domains:
-      - name: licensing-qa.service.trade.gov.uk
-        ns1: ns1.licensing-qa.service.trade.gov.uk
-        ns1ip: 51.179.219.70
-        ns2: ns2.licensing-qa.service.trade.gov.uk
-        ns2ip: 51.179.219.75
+      - name: licensing-uat.service.trade.gov.uk
+        ns1: ns1.licensing-uat.service.trade.gov.uk
+        ns1ip: 51.179.219.81
+        ns2: ns2.licensing-uat.service.trade.gov.uk
+        ns2ip: 51.179.219.82
         records:
           - name: ukbeisep01
             type: A
-            content: 51.179.219.69
+            content: 51.179.219.85
           - name: ukbeisalb
             type: A
-            content: 51.179.219.67
+            content: 51.179.219.79
           - name: www
             type: CNAME
-            content: ukbeisalb.licensing-qa.service.trade.gov.uk.
+            content: ukbeisalb.licensing-uat.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
