@@ -41,7 +41,6 @@
             content: 51.179.219.107
           - name: www
             type: CNAME
-            content: ukbeisalb.licensing.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
