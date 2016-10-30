@@ -9,7 +9,7 @@ RUN curl -o /etc/yum.repos.d/bintray-sbt-rpm.repo https://bintray.com/sbt/rpm/rp
     yum-config-manager --disable rhel-7-server-rt-beta-rpms && \
     yum-config-manager --enable rhel-7-server-rpms && \
     yum-config-manager --enable rhel-7-server-extras-rpms && \
-    yum-config-manager --enable rhel-7-server-optional-rpms && \ # Docker
+    yum-config-manager --enable rhel-7-server-optional-rpms && \
     yum-config-manager --enable rhel-server-rhscl-7-rpms && \
     yum-config-manager --enable rhel-7-server-eus-rpms && \
     yum-config-manager --enable rhel-7-server-eus-supplementary-rpms && \
