@@ -94,4 +94,5 @@
       - mgmt1subnet
       - svc1subnet
       - dmz1subnet
+  ignore_errors: yes
 

@@ -192,7 +192,7 @@
   - 123
   - 464
 
-##### Load Balancer Nodes #####
+##### App Load Balancer Nodes #####
 
 - name: Create app_loadbalancer_nodes security group
   os_security_group:
@@ -418,6 +418,55 @@
   with_items:
   - ingress
   - egress
+
+##### Svc Load Balancer Nodes #####
+
+- name: Create svc_loadbalancer_nodes security group
+  os_security_group:
+    name=svc_loadbalancer_nodes
+    description="Internal traffic to svc nodes"
+
+- name: Remove default egress allowed from svc_loadbalancer_nodes group
+  os_security_group_rule:
+    state: absent
+    security_group: svc_loadbalancer_nodes
+    ethertype: "{{ item }}"
+    direction: egress
+  with_items:
+  - IPv4
+  - IPv6
+
+- name: Allow tcp from the app to the svc services
+  os_security_group_rule:
+    security_group: svc_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 80
+  - 443
+
+- name: Allow tcp from the dmz to the svc services
+  os_security_group_rule:
+    security_group: svc_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.253.0/28
+  with_items:
+  - 80
+  - 443
+
+- name: Allow tcp from the compartment to the svc loadbalancers
+  os_security_group_rule:
+    security_group: app_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - 8443
 
 ##### OpenShift Svc Master #####
 

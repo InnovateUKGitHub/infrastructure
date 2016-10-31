@@ -88,6 +88,19 @@
       - remote_repositories
   with_sequence: start=5 count=2
 
+- name: Create svc load balancer ports
+  os_port:
+    state: present
+    name: svcport0{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.{{ item }}
+    security_groups:
+      - svc_loadbalancer_nodes
+      - svc_nodes
+      - remote_repositories
+  with_sequence: start=5 count=2
+
 # APP ports
 - name: Create a port for the app OpenShift master
   os_port:

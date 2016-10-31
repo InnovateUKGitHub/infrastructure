@@ -32,8 +32,8 @@ RUN curl -o /etc/yum.repos.d/bintray-sbt-rpm.repo https://bintray.com/sbt/rpm/rp
     rm -f /etc/alternatives/java && \
     ln -s /usr/java/jdk1.8.0_112/bin/java /etc/alternatives/java && \
     rm -f jdk-8u112-linux-x64.rpm && \
-    mkdir -p /var/lib/jenkins && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
+    mkdir -p /var/lib/jenkins && \
     chown -R 1001:0 /var/lib/jenkins && \
     chmod -R g+w /var/lib/jenkins
 

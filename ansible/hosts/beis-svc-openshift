@@ -35,9 +35,10 @@ deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
 os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
-openshift_use_openshift_sdn=False
 
 openshift_master_cluster_method=native
+openshift_master_cluster_hostname=ukbeisslb.int.licensing.service.trade.gov.uk
+openshift_master_cluster_public_hostname=ukbeisslb.int.licensing.service.trade.gov.uk
 openshift_master_default_subdomain=svc.int.licensing.service.trade.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
@@ -55,5 +56,5 @@ ukbeissom03.int.licensing.service.trade.gov.uk
 ukbeissom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21 openshift_hostname=ukbeissom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 ukbeissom02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.22 openshift_hostname=ukbeissom02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 ukbeissom03.int.licensing.service.trade.gov.uk ansible_host=10.100.20.23 openshift_hostname=ukbeissom03.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukbeisson01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.51 openshift_hostname=ukbeisson02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
+ukbeisson01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.51 openshift_hostname=ukbeisson01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
 ukbeisson02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.52 openshift_hostname=ukbeisson02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
