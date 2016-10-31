@@ -27,10 +27,10 @@ RUN curl -o /etc/yum.repos.d/bintray-sbt-rpm.repo https://bintray.com/sbt/rpm/rp
     http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm && \
     rpm -ivh jdk-8u102-linux-x64.rpm && \
     rm -f /etc/alternatives/java && \
-    ln -s /usr/java/jdk1.8.0_102/bin/java /etc/alternatives/java && \
-    rm -f jdk-8u102-linux-x64.rpm && \
-    mkdir -p /var/lib/jenkins && \
+    ln -s /usr/java/jdk1.8.0_112/bin/java /etc/alternatives/java && \
+    rm -f jdk-8u112-linux-x64.rpm && \
     echo "export PATH=$PATH:/opt/rh/rh-maven33/root/usr/bin" > /etc/profile.d/maven.sh && \
+    mkdir -p /var/lib/jenkins && \
     chown -R 1001:0 /var/lib/jenkins && \
     chmod -R g+w /var/lib/jenkins
 

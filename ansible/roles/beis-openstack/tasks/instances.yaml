@@ -175,3 +175,19 @@
   with_items:
     - { name: 'ukbeisson01.int.licensing.service.trade.gov.uk', count: 1 }
     - { name: 'ukbeisson02.int.licensing.service.trade.gov.uk', count: 2 }
+
+- name: Create svc haproxy instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport0{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisslb01.int.licensing.service.trade.gov.uk', count: 5 }
+    - { name: 'ukbeisslb02.int.licensing.service.trade.gov.uk', count: 6 }
