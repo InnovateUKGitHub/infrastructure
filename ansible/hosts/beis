@@ -46,6 +46,10 @@ ukbeisaom03.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
 ukbeisaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.51
 ukbeisaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.52
 
+[beis-svc]
+ukbeisslb01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.5
+ukbeisslb02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.6
+
 [beis-svc-openshift]
 ukbeissom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21
 ukbeissom02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.22

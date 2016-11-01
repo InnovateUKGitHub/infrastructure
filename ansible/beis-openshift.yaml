@@ -100,17 +100,17 @@
   - name: Set the master schedulable
     command: /usr/local/bin/oadm manage-node {{ inventory_hostname }} --schedulable=true
     when: "'masters' in group_names"
-  - name: Set correct URL in master-config.yaml
-    command: >
-      sed -i 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
-      /etc/origin/master/master-config.yaml
-    when: "'masters' in group_names"
-  - name: Restart atomic-openshift-master-api
-    service: name=atomic-openshift-master-api state=restarted enabled=yes
-    when: "'masters' in group_names"
-  - name: Restart atomic-openshift-master-controllers
-    service: name=atomic-openshift-master-controllers state=restarted enabled=yes
-    when: "'masters' in group_names"
-  - name: Create user admin
-    command: htpasswd -b /etc/origin/master/htpasswd admin admin
-    when: "'masters' in group_names"
+#  - name: Set correct URL in master-config.yaml
+#    command: >
+#      sed -i 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'
+#      /etc/origin/master/master-config.yaml
+#    when: "'masters' in group_names"
+#  - name: Restart atomic-openshift-master-api
+#    service: name=atomic-openshift-master-api state=restarted enabled=yes
+#    when: "'masters' in group_names"
+#  - name: Restart atomic-openshift-master-controllers
+#    service: name=atomic-openshift-master-controllers state=restarted enabled=yes
+#    when: "'masters' in group_names"
+#  - name: Create user admin
+#    command: htpasswd -b /etc/origin/master/htpasswd admin admin
+#    when: "'masters' in group_names"

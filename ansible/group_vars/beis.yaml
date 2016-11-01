@@ -31,10 +31,10 @@
 #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.69"'
 
 # LITE UAT
-ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.85"'
+#ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.85"'
 
 # BEIS Production
-#ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.105"'
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219.105"'
 
 # Vagrant
 #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q -p2222 vagrant@127.0.0.1"'
@@ -48,7 +48,7 @@ ipa_reverse_zones:
   - 20.100.10.in-addr.arpa.
 
 ipa_wildcard_zones:
-  - { name: 'mgmt', ip_addr: '10.100.100.21' }
   - { name: 'app', ip_addr: '10.100.1.21' }
+  - { name: 'svc', ip_addr: '10.100.20.21' }
 
 ipaserver_keytab: /root/beis.keytab
