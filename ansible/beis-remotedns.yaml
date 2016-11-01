@@ -42,6 +42,12 @@
           - name: www
             type: CNAME
             content: ukbeisalb.licensing-uat.service.trade.gov.uk.
+          - name: ogel-registration
+            type: CNAME
+            content: ukbeisalb.licensing-uat.service.trade.gov.uk.
+          - name: permissions-finder
+            type: CNAME
+            content: ukbeisalb.licensing-uat.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
