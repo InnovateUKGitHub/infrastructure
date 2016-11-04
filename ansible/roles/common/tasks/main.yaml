@@ -33,13 +33,21 @@
   command: timedatectl set-timezone UTC 
 
 # Disable cloud-init since it does things like reset the hostname on boot
-- name: Disable cloud-init
-  service: name="{{ item }}" enabled=no
-  with_items:
-    - cloud-init
-    - cloud-init-local
-    - cloud-config
-    - cloud-final
+# TODO: refactor block with_items when it's supported as the block terminates
+# on first failure. In this case that's good enough.
+# https://github.com/ansible/ansible/issues/13262
+- block:
+    - name: Disable cloud-init
+      service: name="{{ item }}" enabled=no
+      register: res
+      with_items:
+        - cloud-init
+        - cloud-init-local
+        - cloud-config
+        - cloud-final
+  rescue: 
+    - debug: msg=cmd.res
+      failed_when: "'not find the requested service' in res.msg"
 
 # Register the systems with RedHat
 - include: redhat.yaml
