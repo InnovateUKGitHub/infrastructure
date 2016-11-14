@@ -2,14 +2,14 @@ ipaserver_base_command: ipa-server-install -U
 ipaserver_configure_ssh: True
 ipaserver_configure_sshd: True
 ipaserver_dns_forwarder: False
-ipaserver_domain: int.licensing.service.trade.gov.uk
+ipaserver_domain: licensing.service.trade.gov.uk.test
 ipaserver_hbac_allow: True
 ipaserver_idstart: 5000
 ipaserver_idmax: False
 ipaserver_mkhomedir: True
 ipaserver_packages:
   - ipa-server-dns
-ipaserver_realm: INT.LICENSING.SERVICE.TRADE.GOV.UK
+ipaserver_realm: LICENSING.SERVICE.TRADE.GOV.UK.TEST
 ipaserver_setup_dns: True
 ipaserver_setup_ntp: True
 ipaserver_ssh_trust_dns: True

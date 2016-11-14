@@ -76,7 +76,7 @@
     kinit admin -k -t {{ ipaserver_keytab }} ;
     hname={{ item }} ;
     ip_addr={{ hostvars[item]['ansible_host'] }} ;
-    ipa dnsrecord-add int.licensing.service.trade.gov.uk ${hname%%.*} --a-rec $ip_addr >> 
+    ipa dnsrecord-add {{ ipaserver_domain }} ${hname%%.*} --a-rec $ip_addr >> 
       /root/ipa_replicas.log ;
     ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
       /root/ipa_replicas.log ;
