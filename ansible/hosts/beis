@@ -25,37 +25,37 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [beis-ras]
-ukbeisep01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.11
+ukbeisep01.licensing.service.trade.gov.uk.test ansible_host=10.100.254.11
 
 [beis-ns]
-ukbeisns01.int.licensing.service.trade.gov.uk ansible_host=10.100.254.21 dnsrole=master
-ukbeisns02.int.licensing.service.trade.gov.uk ansible_host=10.100.254.22 dnsrole=slave
+ukbeisns01.licensing.service.trade.gov.uk.test ansible_host=10.100.254.21 dnsrole=master
+ukbeisns02.licensing.service.trade.gov.uk.test ansible_host=10.100.254.22 dnsrole=slave
 
 [beis-mgmt-ipa]
-ukbeisipa01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.11 iparole=primary
-ukbeisipa02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.12 iparole=replica
+ukbeisipa01.licensing.service.trade.gov.uk.test ansible_host=10.100.100.11 iparole=primary
+ukbeisipa02.licensing.service.trade.gov.uk.test ansible_host=10.100.100.12 iparole=replica
 
 [beis-app]
-ukbeisalb01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.5
-ukbeisalb02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.6
+ukbeisalb01.licensing.service.trade.gov.uk.test ansible_host=10.100.1.5
+ukbeisalb02.licensing.service.trade.gov.uk.test ansible_host=10.100.1.6
 
 [beis-app-openshift]
-ukbeisaom01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.21
-ukbeisaom02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.22
-ukbeisaom03.int.licensing.service.trade.gov.uk ansible_host=10.100.1.23
-ukbeisaon01.int.licensing.service.trade.gov.uk ansible_host=10.100.1.51
-ukbeisaon02.int.licensing.service.trade.gov.uk ansible_host=10.100.1.52
+ukbeisaom01.licensing.service.trade.gov.uk.test ansible_host=10.100.1.21
+ukbeisaom02.licensing.service.trade.gov.uk.test ansible_host=10.100.1.22
+ukbeisaom03.licensing.service.trade.gov.uk.test ansible_host=10.100.1.23
+ukbeisaon01.licensing.service.trade.gov.uk.test ansible_host=10.100.1.51
+ukbeisaon02.licensing.service.trade.gov.uk.test ansible_host=10.100.1.52
 
 [beis-svc]
-ukbeisslb01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.5
-ukbeisslb02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.6
+ukbeisslb01.licensing.service.trade.gov.uk.test ansible_host=10.100.20.5
+ukbeisslb02.licensing.service.trade.gov.uk.test ansible_host=10.100.20.6
 
 [beis-svc-openshift]
-ukbeissom01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.21
-ukbeissom02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.22
-ukbeissom03.int.licensing.service.trade.gov.uk ansible_host=10.100.20.23
-ukbeisson01.int.licensing.service.trade.gov.uk ansible_host=10.100.20.51
-ukbeisson02.int.licensing.service.trade.gov.uk ansible_host=10.100.20.52
+ukbeissom01.licensing.service.trade.gov.uk.test ansible_host=10.100.20.21
+ukbeissom02.licensing.service.trade.gov.uk.test ansible_host=10.100.20.22
+ukbeissom03.licensing.service.trade.gov.uk.test ansible_host=10.100.20.23
+ukbeisson01.licensing.service.trade.gov.uk.test ansible_host=10.100.20.51
+ukbeisson02.licensing.service.trade.gov.uk.test ansible_host=10.100.20.52
 
 [beis:children]
 beis-ras
