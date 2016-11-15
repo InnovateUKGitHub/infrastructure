@@ -30,7 +30,7 @@ etcd
 nodes
 
 [OSEv3:vars]
-ansible_sudo=true
+ansible_become=true
 deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
@@ -48,9 +48,9 @@ ukbeissom02.licensing.service.trade.gov.uk.test openshift_hostname=ukbeissom02.l
 ukbeissom03.licensing.service.trade.gov.uk.test openshift_hostname=ukbeissom03.licensing.service.trade.gov.uk.test ansible_host=10.100.20.23
 
 [etcd]
-ukbeissom01.licensing.service.trade.gov.uk.test
-ukbeissom02.licensing.service.trade.gov.uk.test
-ukbeissom03.licensing.service.trade.gov.uk.test
+ukbeissom01.licensing.service.trade.gov.uk.test ansible_host=10.100.1.21
+ukbeissom02.licensing.service.trade.gov.uk.test ansible_host=10.100.1.22
+ukbeissom03.licensing.service.trade.gov.uk.test ansible_host=10.100.1.23
 
 [nodes]
 ukbeissom01.licensing.service.trade.gov.uk.test ansible_host=10.100.20.21 openshift_hostname=ukbeissom01.licensing.service.trade.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"

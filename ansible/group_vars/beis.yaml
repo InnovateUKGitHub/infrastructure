@@ -42,7 +42,7 @@ ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q cloud-user@51.179.219
 # The first entry is for reference only. By default, a reverse zone is created
 # for the subnet the master is connected to.
 ipa_reverse_zones:
-#  - 100.100.10.in-addr.arpa.
+  - 100.100.10.in-addr.arpa.
   - 254.100.10.in-addr.arpa.
   - 1.100.10.in-addr.arpa.
   - 20.100.10.in-addr.arpa.
