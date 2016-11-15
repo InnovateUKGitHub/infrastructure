@@ -63,7 +63,8 @@ beis-ns
 beis-mgmt-ipa
 beis-app
 beis-app-openshift
+beis-svc
 beis-svc-openshift
 
 [beis:vars]
-ansible_sudo=true
+ansible_become=true
