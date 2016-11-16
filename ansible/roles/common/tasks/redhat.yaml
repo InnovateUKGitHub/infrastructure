@@ -28,11 +28,26 @@
   redhat_subscription: state=present username={{ redhat_username }} 
                        password={{ redhat_password }}
                        autosubscribe=true
-#                       pool='Red Hat Enterprise Linux Developer Suite'
+  register: sub1_result
+  failed_when: "'This system is already registered' not in sub1_result.msg \
+                and sub1_result|failed"
 
 - name: Install yum-utils
-  yum: 
-    disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils state=latest
+  yum: disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils
+       state=latest
+  register: inst_result
+  ignore_errors: yes
+
+- name: Reregister with Red Hat Enterprise Linux Developer Suite
+  redhat_subscription: state=present username={{ redhat_username }}
+                       password={{ redhat_password }}
+                       force_register=true autosubscribe=true
+  when: "inst_result|failed"
+
+- name: Install yum-utils
+  yum: disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils 
+       state=latest
+  when: "inst_result|failed"
 
 - name: Disable some repositories
   command:
