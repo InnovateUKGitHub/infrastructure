@@ -325,12 +325,17 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 10.100.1.0/24
   with_items:
+  - 111
   - 1936
+  - 2049
   - 2379
   - 2380
   - 4194
   - 8080
   - 10250
+  - 20048
+  - 50825
+  - 53248
 
 - name: Allow specific udp to OpenShift master from the app compartment
   os_security_group_rule:
@@ -516,11 +521,16 @@
     port_range_max: "{{ item }}"
     remote_ip_prefix: 10.100.20.0/24
   with_items:
+  - 111
+  - 2049
   - 2379
   - 2380
   - 4194
   - 8080
   - 10250
+  - 20048
+  - 50825
+  - 53248
 
 - name: Allow specific udp to OpenShift master from the svc compartment
   os_security_group_rule:
