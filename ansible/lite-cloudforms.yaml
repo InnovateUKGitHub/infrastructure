@@ -24,7 +24,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- hosts: localhost
+- hosts: beis-svc
+  vars_prompt:
+    - name: "auth_pass"
+      prompt: "Enter vrrp pass"
+      private: yes
+  vars:
+    notification_email: lite-ops@digital.beis.gov.uk
+    notification_email_from: lite-dev@digital.beis.gov.uk
+    smtp_server: smtp-relay.gmail.com
+    vip: 10.100.20.7
+    domains:
+      - ukbeisalb.licensing-dev.service.trade.gov.uk
+      - www.licensing-dev.service.trade.gov.uk 
   roles: 
   - cloudforms
 
@@ -35,7 +47,7 @@
       kinit admin -k -t {{ ipaserver_keytab }} ;
       hname={{ item }} ;
       ip_addr={{ hostvars[item]['ansible_host'] }} ;
-      ipa dnsrecord-add int.licensing.service.trade.gov.uk ${hname%%.*} --a-rec $ip_addr >>
+      ipa dnsrecord-add licensing.service.trade.gov.uk.test ${hname%%.*} --a-rec $ip_addr >>
         /root/ipa_{{ item }}.log ;
       ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
         /root/ipa_{{ item }}.log ;
