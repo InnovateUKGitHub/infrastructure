@@ -24,23 +24,75 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[OSEv3:children]
-masters
-nodes
+- name: Create app network
+  os_network:
+    name: app
 
-[OSEv3:vars]
-#ansible_ssh_user=cloud-user
-ansible_become=true
-ansible_sudo=true
-deployment_type=openshift-enterprise
-containerized=true
-openshift_master_default_subdomain=mgmt.int.licensing.service.trade.gov.uk
-openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+- name: Create mgmt network
+  os_network:
+    name: mgmt
 
-[masters]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk
+- name: Create svc network
+  os_network: 
+    name: svc
 
-[nodes]
-ukblitemom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukblitemon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22 openshift_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukblitemon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23 openshift_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukblitemon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+- name: Create dmz network
+  os_network:
+    name: dmz
+
+- name: Create dmz1subnet subnet
+  os_subnet:
+    network_name: dmz
+    name: dmz1subnet
+    cidr: 10.100.254.0/24
+    gateway_ip: 10.100.254.1
+    dns_nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  ignore_errors: yes
+
+- name: Create app1subnet subnet 
+  os_subnet:
+    network_name: app
+    name: app1subnet
+    cidr: 10.100.1.0/24
+    gateway_ip: 10.100.1.1
+    dns_nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  ignore_errors: yes
+
+- name: Create mgmt1subnet
+  os_subnet:
+    network_name: mgmt
+    name: mgmt1subnet
+    cidr: 10.100.100.0/24
+    gateway_ip: 10.100.100.1
+    dns_nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  ignore_errors: yes
+
+- name: Create svc1subnet
+  os_subnet:
+    network_name: svc
+    name: svc1subnet
+    cidr: 10.100.20.0/24
+    gateway_ip: 10.100.20.1
+    dns_nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  ignore_errors: yes
+
+- name: Create WAN Gateway router
+  os_router:
+    state: present
+    name: WAN Gateway
+    network: internet
+    interfaces:
+      - app1subnet
+      - mgmt1subnet
+      - svc1subnet
+      - dmz1subnet
+  ignore_errors: yes
+

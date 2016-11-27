@@ -24,9 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Create the golden host
+- name: Create the remote access servers
   os_server:
-    name: ukbliteep01.int.licensing.service.trade.gov.uk
+    name: ukbeisep01.{{ role_fqdn }}
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -38,12 +38,11 @@
     nics:
       - port-name: dmzport11
     meta:
-      hostname: ukbliteep01.int.licensing.service.trade.gov.uk
-  ignore_errors: yes
+      hostname: ukbeisep01.{{ role_fqdn }}
 
 - name: Create external dns master server
   os_server:
-    name: 'ukblitens01.int.licensing.service.trade.gov.uk'
+    name: 'ukbeisns01.{{ role_fqdn }}'
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -55,14 +54,13 @@
     nics:
       - port-name: dmzport21
     meta:
-      hostname: 'ukblitens01.int.licensing.service.trade.gov.uk'
+      hostname: 'ukbeisns01.{{ role_fqdn }}'
     volumes:
       - powerdns-master-pv
-  ignore_errors: yes
 
 - name: Create external dns slave server
   os_server:
-    name: 'ukblitens02.int.licensing.service.trade.gov.uk'
+    name: 'ukbeisns02.{{ role_fqdn }}'
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -74,8 +72,7 @@
     nics:
       - port-name: dmzport22
     meta:
-      hostname: 'ukblitens02.int.licensing.service.trade.gov.uk'
-  ignore_errors: yes
+      hostname: 'ukbeisns02.{{ role_fqdn }}'
 
 - name: Create IPA servers
   os_server:
@@ -94,29 +91,10 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbliteipa01.int.licensing.service.trade.gov.uk', count: 1 }
-    - { name: 'ukbliteipa02.int.licensing.service.trade.gov.uk', count: 2 }
-  ignore_errors: yes
+    - { name: 'ukbeisipa01.{{ role_fqdn }}', count: 1 }
+    - { name: 'ukbeisipa02.{{ role_fqdn }}', count: 2 }
 
-- name: Create management OpenShift instances
-  os_server:
-    name: "{{ item.name }}"
-    image: rhel7
-    flavor: m1.small
-    key_name: justin_cook
-    timeout: 200
-    auto_ip: no
-    nics:
-      - port-name: mgmtport2{{ item.count }}
-    meta:
-      hostname: "{{ item.name }}"
-  with_items:
-    - { name: 'ukblitemom01.int.licensing.service.trade.gov.uk', count: 1 }
-    - { name: 'ukblitemon01.int.licensing.service.trade.gov.uk', count: 2 }
-    - { name: 'ukblitemon02.int.licensing.service.trade.gov.uk', count: 3 }
-  ignore_errors: yes
-
-- name: Create app OpenShift instances
+- name: Create app OpenShift master instances
   os_server:
     name: "{{ item.name }}"
     image: rhel7
@@ -129,12 +107,43 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbliteaom01.int.licensing.service.trade.gov.uk', count: 1 }
-    - { name: 'ukbliteaon01.int.licensing.service.trade.gov.uk', count: 2 }
-    - { name: 'ukbliteaon02.int.licensing.service.trade.gov.uk', count: 3 }
-  ignore_errors: yes
+    - { name: 'ukbeisaom01.{{ role_fqdn }}', count: 1 }
+    - { name: 'ukbeisaom02.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeisaom03.{{ role_fqdn }}', count: 3 }
 
-- name: Create svc OpenShift instances
+- name: Create app OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport5{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisaon01.{{ role_fqdn }}', count: 1 }
+    - { name: 'ukbeisaon02.{{ role_fqdn }}', count: 2 }
+
+- name: Create app haproxy instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport0{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisalb01.{{ role_fqdn }}', count: 5 }
+    - { name: 'ukbeisalb02.{{ role_fqdn }}', count: 6 }
+
+- name: Create svc OpenShift master instances
   os_server:
     name: "{{ item.name }}"
     image: rhel7
@@ -147,7 +156,38 @@
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukblitesom01.int.licensing.service.trade.gov.uk', count: 1 }
-    - { name: 'ukbliteson01.int.licensing.service.trade.gov.uk', count: 2 }
-    - { name: 'ukbliteson02.int.licensing.service.trade.gov.uk', count: 3 }
-  ignore_errors: yes
+    - { name: 'ukbeissom01.{{ role_fqdn }}', count: 1 }
+    - { name: 'ukbeissom02.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeissom03.{{ role_fqdn }}', count: 3 }
+
+- name: Create svc OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport5{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisson01.{{ role_fqdn }}', count: 1 }
+    - { name: 'ukbeisson02.{{ role_fqdn }}', count: 2 }
+
+- name: Create svc haproxy instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport0{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeisslb01.{{ role_fqdn }}', count: 5 }
+    - { name: 'ukbeisslb02.{{ role_fqdn }}', count: 6 }
