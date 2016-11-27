@@ -24,14 +24,30 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Put the generated replica file on replica
-  copy: src=/tmp/replica-info-{{ inventory_hostname }}.gpg
-        dest=/var/lib/ipa/replica-info-{{ inventory_hostname }}.gpg
+- name: Put the keytab file on replica
+  copy: src=/tmp/{{ ipaserver_keytab | basename }} dest={{ ipaserver_keytab }}
+
+- name: Update replica resolv.conf for autodiscovery
+  template: src=resolv.conf.j2 dest=/etc/resolv.conf mode=0644
+
+- name: debug ipa_replicas
+  debug: var=ipa_host_pass
+  when: ipa_host_pass is defined
+
+- name: Install the IPA client
+  shell:
+    ipa-client-install --unattended --password {{ ipa_host_pass }}
+  args:
+    executable: /bin/bash
+    creates: /etc/ipa/default.conf
+  when: ipa_host_pass is defined
 
 - name: Install the replica
-  action: command
-    ipa-replica-install --unattended --mkhomedir --setup-dns --setup-ca 
-      --no-forwarders -p {{ ipaserver_dir_mgmt_password }} --skip-conncheck
-      -w {{ ipaserver_admin_password }} --log-file=/tmp/ipaserver_installer.log
-      /var/lib/ipa/replica-info-{{ inventory_hostname }}.gpg
-    creates=/etc/ipa/default.conf
+  shell:
+     kinit admin -k -t {{ ipaserver_keytab }} ;
+     ipa-replica-install --unattended --mkhomedir --setup-dns --setup-ca 
+       --no-forwarders --skip-conncheck --principal admin
+  args:
+    executable: /bin/bash
+#    creates: /etc/ipa/default.conf
+  when: ipa_host_pass is defined
