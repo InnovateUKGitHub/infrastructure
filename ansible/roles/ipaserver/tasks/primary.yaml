@@ -25,8 +25,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - name: Install the primary IPA server
-  action: command
-    {{ ipaserver_base_command }}
+  shell:
+    ipa-server-install --unattended
     --realm {{ ipaserver_realm }}
     --domain {{ ipaserver_domain }}
     -a {{ ipaserver_admin_password }}
@@ -47,7 +47,9 @@
     {{ '' if ipaserver_configure_sshd | default(True) else '--no-sshd' }}
     {{ '' if ipaserver_ui_redirect | default(True) else '--no-ui-redirect' }}
     {{ '--log-file=/tmp/ipaserver_installer.log' }}
-    creates=/etc/ipa/default.conf
+  args:
+    executable: /bin/bash
+    creates: /etc/ipa/default.conf
 
 - name: Create a keytab file
   shell:
@@ -71,34 +73,60 @@
                 not in reverse_result.stderr and 'already exists' not \
                 in reverse_result.stderr"
 
-- name: Create DNS entries for replicas
+- name: Create DNS entries for servers
   shell:
     kinit admin -k -t {{ ipaserver_keytab }} ;
-    hname={{ item }} ;
     ip_addr={{ hostvars[item]['ansible_host'] }} ;
-    ipa dnsrecord-add {{ ipaserver_domain }} ${hname%%.*} --a-rec $ip_addr >> 
-      /root/ipa_replicas.log ;
-    ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec {{ item }}. >>
-      /root/ipa_replicas.log ;
-#    ipa-replica-prepare -p {{ ipaserver_dir_mgmt_password }} --no-wait-for-dns 
-#      --log-file=/root/ipa_replicas.log ${hname}
+    ipa host-add {{ item }} --random --ip-address ${ip_addr} | grep 
+      "Random password" | awk -F':' '{print$2}' | awk
+      /root/replicas-{{ item.split('.')[0] }}.log ;
   args:
     executable: /bin/bash
-    creates: /root/ipa_replicas.log
+    creates: /root/replicas-{{ item.split('.')[0] }}.log
+  register: ipa_host_pass_out
+#  when: hostvars[item]['iparole'] == "replica"
   with_items:
     - "{{ groups['beis-mgmt-ipa'] }}"
-  when: hostvars[item]['iparole'] == "replica"
+
+- name: Output ipa_host_pass_out
+  debug: var=ipa_host_pass_out.stdout
+  when: ipa_host_pass_out.stdout is defined
+
+- name: Promote ipa_host_pass_out.stdout as fact
+  set_fact: 
+    ipa_host_pass: "{{ ipa_host_pass_out.stdout.strip() }}"
+#  when: hostvars[item]['iparole'] == "replica"
+  with_items:
+    - "{{ groups['beis-mgmt-ipa'] }}"
+  when: ipa_host_pass_out.stdout is defined
+
+- name: Output ipa_host_pass
+  debug: var=ipa_host_pass
+  when: ipa_host_pass is defined
+
+- name: Add reverse DNS entries
+  shell:
+    kinit admin -k -t {{ ipaserver_keytab }} ;
+    ip_addr={{ hostvars[item]['ansible_host'] }} ;
+    ipa dnsrecord-add 100.100.10.in-addr.arpa. ${ip_addr##*.} --ptr-rec
+      {{ item }}. >> /root/replicas-reverse.log ;
+  args:
+    executable: /bin/bash
+#    creates: /root/replicas-reverse.log
+  register: reverse_entries
+  failed_when: "'no modifications to be performed' not in 
+                reverse_entries.stderr and reverse_entries.rc != 0"
+#  when: hostvars[item]['iparole'] == "replica"
+  with_items:
+    - "{{ groups['beis-mgmt-ipa'] }}"
+
+- name: Print reverse_entries
+  debug: var=reverse_entries
 
 - name: Fetch files from primary ipa server
-  fetch: src={{ item }} dest=/tmp/{{ item }}
+  fetch: src={{ item }} dest=/tmp/{{ item | basename }} flat=yes
   with_items:
     - '/root/cacert.p12'
     - '/root/ca-agent.p12'
     - "{{ ipaserver_keytab }}"
 
-#- name: Fetch generated replica prepared files from master
-#  fetch: src=/var/lib/ipa/replica-info-{{ item }}.gpg
-#         dest=/tmp/replica-info-{{ item }}.gpg flat=yes
-#  with_items:
-#    - "{{ groups['beis-mgmt-ipa'] }}"
-#  when: hostvars[item]['iparole'] == "replica"

@@ -36,7 +36,7 @@
 # Need to increase entropy as cloud providers generally don't have enough
 # and this leads to exceptionally lengthy or incomplete installs.
 - name: Install haveged
-  yum: name=ftp://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
+  yum: name=http://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
        state=present
 
 - name: Start haveged
@@ -60,12 +60,13 @@
   tags:
     - primary
 
+- include: dnsentries.yaml
+  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
+  tags:
+    - dnsentries
+
 - include: replica.yaml
   when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
   tags:
     - replica
 
-- include: dnsentries.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'primary' }}"
-  tags:
-    - dnsentries
