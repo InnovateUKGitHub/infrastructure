@@ -39,6 +39,12 @@
           - name: ukbeisalb
             type: A
             content: 51.179.219.67
+          - name: permissions-finder
+            type: CNAME
+            content: ukbeisalb.licensing-qa.service.trade.gov.uk.
+          - name: ogel-registration
+            type: CNAME
+            content: ukbeisalb.licensing-qa.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
