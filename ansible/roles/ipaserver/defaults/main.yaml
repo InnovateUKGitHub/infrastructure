@@ -1,4 +1,4 @@
-ipaserver_base_command: ipa-server-install -U 
+ipaserver_replicas: {}
 ipaserver_configure_ssh: True
 ipaserver_configure_sshd: True
 ipaserver_dns_forwarder: False
@@ -15,3 +15,4 @@ ipaserver_setup_ntp: True
 ipaserver_ssh_trust_dns: True
 ipaserver_ui_redirect: True
 ipaserver_manage_firewalld: True
+ipaserver_keytab: /root/beis.keytab
