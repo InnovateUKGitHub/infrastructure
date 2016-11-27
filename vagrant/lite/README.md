@@ -79,9 +79,9 @@ Once you have created the environment, you will notice Kubernetes functions as
 a three-node cluster.
 
 ```
-[root@ukblitemom01 ~]# oc get nodes
+[root@ukbeismom01 ~]# oc get nodes
 NAME                                              STATUS    AGE
-ukblitemom01.int.licensing.service.trade.gov.uk   Ready     17m
-ukblitemon01.int.licensing.service.trade.gov.uk   Ready     11m
-ukblitemon02.int.licensing.service.trade.gov.uk   Ready     11m
+ukbeismom01.licensing.service.trade.gov.uk.test   Ready     17m
+ukbeismon01.licensing.service.trade.gov.uk.test   Ready     11m
+ukbeismon02.licensing.service.trade.gov.uk.test   Ready     11m
 ```
