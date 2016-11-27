@@ -31,18 +31,18 @@ interface: vboxnet0
 natnet: 192.168.123.0/24
 hosts:
   - ip: 10.100.100.11
-    host: ukbliteipa01.int.licensing.service.trade.gov.uk ukbliteipa01
+    host: ukbeisipa01.licensing.service.trade.gov.uk.test ukbeisipa01
   - ip: 10.100.100.12
-    host: ukbliteipa02.int.licensing.service.trade.gov.uk ukbliteipa01
+    host: ukbeisipa02.licensing.service.trade.gov.uk.test ukbeisipa01
   - ip: 10.100.100.21
-    host: ukblitemom01.int.licensing.service.trade.gov.uk ukblitemom01
+    host: ukbeismom01.licensing.service.trade.gov.uk.test ukbeismom01
   - ip: 10.100.100.22
-    host: ukblitemon01.int.licensing.service.trade.gov.uk ukblitemon01
+    host: ukbeismon01.licensing.service.trade.gov.uk.test ukbeismon01
   - ip: 10.100.100.23
-    host: ukblitemon02.int.licensing.service.trade.gov.uk ukblitemon02
+    host: ukbeismon02.licensing.service.trade.gov.uk.test ukbeismon02
   - ip: 10.100.1.21
-    host: ukbliteaom01.int.licensing.service.trade.gov.uk ukbliteaom01
+    host: ukbeisaom01.licensing.service.trade.gov.uk.test ukbeisaom01
   - ip: 10.100.1.22
-    host: ukbliteaon01.int.licensing.service.trade.gov.uk ukbliteaon01
+    host: ukbeisaon01.licensing.service.trade.gov.uk.test ukbeisaon01
   - ip: 10.100.1.23
-    host: ukbliteaon01.int.licensing.service.trade.gov.uk ukbliteaon02
+    host: ukbeisaon01.licensing.service.trade.gov.uk.test ukbeisaon02
