@@ -9,8 +9,8 @@
     <denyAnonymousReadAccess>true</denyAnonymousReadAccess>
   </authorizationStrategy>
   <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.11">
-    <server>ukbliteipa01.int.licensing.service.trade.gov.uk</server>
-    <rootDN>dc=int,dc=licensing,dc=service,dc=trade,dc=gov,dc=uk</rootDN>
+    <server>ukbeisipa01.licensing.service.trade.gov.uk.test</server>
+    <rootDN>dc=licensing,dc=service,dc=trade,dc=gov,dc=uk,dc=test</rootDN>
     <inhibitInferRootDN>false</inhibitInferRootDN>
     <userSearchBase>cn=users,cn=accounts</userSearchBase>
     <userSearch>uid={0}</userSearch>
