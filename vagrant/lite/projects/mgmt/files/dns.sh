@@ -1,4 +1,4 @@
----
+#!/usr/bin/env bash
 # Copyright (c) 2016, Department for Business, Energy & Industrial Strategy
 # All rights reserved.
 #
@@ -24,48 +24,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The naming and authentication/authorization servers 
+# Look for a private key "id_rsa" and copy it over for use within the guest.
 
-- nick: ukbeisipa01
-  name: ukbeisipa01.licensing.service.trade.gov.uk.test
-  box: "%project.box%"
-  groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
-  box_check_update: true
-  autostart: true
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.11
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  natnet: "%global.natnet%"
-  authorized_keys: "%global.authorized_keys%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/dns.sh"
+set -o nounset
+set -o errexit
+set -o pipefail
 
-- nick: ukbeisipa02
-  name: ukbeisipa02.licensing.service.trade.gov.uk.test
-  box: "%project.box%"
-  groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
-  box_check_update: true
-  autostart: true
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.12
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  natnet: "%global.natnet%"
-  authorized_keys: "%global.authorized_keys%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/dns.sh"
+exec 1> >( sed "s/^/$(date '+[%F %T]'): /" | tee -a /tmp/provision.log) 2>&1
+
+# Check to see if an expected nameserver is configured
+egrep 'nameserver\s+10\.100\.100\.11' /etc/resolv.conf && \
+  egrep 'nameserver\s+127\.0\.0\.1' /etc/resolv.conf
+
+# If an expected nameserver is not found, configure a generic one
+if [ "$?" -ne 0 ]
+then
+  sed -i 's/nameserver\s+.*$/nameserver 8.8.8.8/' /etc/resolv.conf || \
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+fi

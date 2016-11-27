@@ -24,22 +24,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The naming and authentication/authorization servers 
-
-- nick: ukbeisipa01
-  name: ukbeisipa01.licensing.service.trade.gov.uk.test
+- nick: ukbeisalb01
+  name: ukbeisalb01.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
+    - loadbalancers
+    - app_loadbalancers
+  memory: 2048
+  cpus: 2
   box_check_update: true
   autostart: true
   networks:
     - net: private_network
       type: static
-      ip: 10.100.100.11
+      ip: 10.100.1.5
       mask: 255.255.0.0
       interface: "%project.interface%"
   natnet: "%global.natnet%"
@@ -47,21 +45,22 @@
   provision:
     - type: shell
       path: "%host.files_dir%/dns.sh"
+      run: always
 
-- nick: ukbeisipa02
-  name: ukbeisipa02.licensing.service.trade.gov.uk.test
+- nick: ukbeisalb02
+  name: ukbeisalb02.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
+    - loadbalancers
+    - app_loadbalancers
+  memory: 2048
+  cpus: 2
   box_check_update: true
   autostart: true
   networks:
     - net: private_network
       type: static
-      ip: 10.100.100.12
+      ip: 10.100.1.6
       mask: 255.255.0.0
       interface: "%project.interface%"
   natnet: "%global.natnet%"
@@ -69,3 +68,4 @@
   provision:
     - type: shell
       path: "%host.files_dir%/dns.sh"
+      run: always

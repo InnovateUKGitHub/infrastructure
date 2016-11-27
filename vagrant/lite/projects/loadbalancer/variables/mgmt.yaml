@@ -24,48 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The naming and authentication/authorization servers 
+# Look for a private key "id_rsa" and copy it over for use within the guest.
+# These are the project variables specifically for mgmt
 
-- nick: ukbeisipa01
-  name: ukbeisipa01.licensing.service.trade.gov.uk.test
-  box: "%project.box%"
-  groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
-  box_check_update: true
-  autostart: true
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.11
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  natnet: "%global.natnet%"
-  authorized_keys: "%global.authorized_keys%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/dns.sh"
+box: "bis/rhel7"
+interface: "vboxnet0"
 
-- nick: ukbeisipa02
-  name: ukbeisipa02.licensing.service.trade.gov.uk.test
-  box: "%project.box%"
-  groups:
-    - ipa
-    - mgmt
-  memory: 1024
-  cpus: 1
-  box_check_update: true
-  autostart: true
-  networks:
-    - net: private_network
-      type: static
-      ip: 10.100.100.12
-      mask: 255.255.0.0
-      interface: "%project.interface%"
-  natnet: "%global.natnet%"
-  authorized_keys: "%global.authorized_keys%"
-  provision:
-    - type: shell
-      path: "%host.files_dir%/dns.sh"

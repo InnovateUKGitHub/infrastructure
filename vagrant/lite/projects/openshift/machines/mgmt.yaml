@@ -26,8 +26,8 @@
 
 # This is an Openshift cluster
 
-- nick: ukblitemom01
-  name: ukblitemom01.int.licensing.service.trade.gov.uk
+- nick: ukbeismom01
+  name: ukbeismom01.licensing.service.trade.gov.uk.test
   primary: true
   box: "%project.box%"
   groups:
@@ -46,8 +46,8 @@
   hosts: "%project.hosts%"
   authorized_keys: "%global.authorized_keys%"
 
-- nick: ukblitemon01
-  name: ukblitemon01.int.licensing.service.trade.gov.uk
+- nick: ukbeismon01
+  name: ukbeismon01.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
   - os-mgmt
@@ -65,8 +65,8 @@
   hosts: "%project.hosts%"
   authorized_keys: "%global.authorized_keys%"
 
-- nick: ukblitemon02
-  name: ukblitemon02.int.licensing.service.trade.gov.uk
+- nick: ukbeismon02
+  name: ukbeismon02.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
   - os-mgmt
