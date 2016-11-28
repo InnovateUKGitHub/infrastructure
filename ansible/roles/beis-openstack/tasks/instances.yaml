@@ -26,7 +26,7 @@
 
 - name: Create the remote access servers
   os_server:
-    name: ukbeisep01.{{ role_fqdn }}
+    name: ukbliteep01.int.licensing.service.trade.gov.uk
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -38,11 +38,11 @@
     nics:
       - port-name: dmzport11
     meta:
-      hostname: ukbeisep01.{{ role_fqdn }}
+      hostname: ukbliteep01.int.licensing.service.trade.gov.uk
 
 - name: Create external dns master server
   os_server:
-    name: 'ukbeisns01.{{ role_fqdn }}'
+    name: 'ukblitens01.int.licensing.service.trade.gov.uk'
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -54,13 +54,11 @@
     nics:
       - port-name: dmzport21
     meta:
-      hostname: 'ukbeisns01.{{ role_fqdn }}'
-    volumes:
-      - powerdns-master-pv
+      hostname: 'ukblitens01.int.licensig.service.trade.gov.uk'
 
 - name: Create external dns slave server
   os_server:
-    name: 'ukbeisns02.{{ role_fqdn }}'
+    name: 'ukblitens02.int.licensing.service.trade.gov.uk'
     image: rhel7
     flavor: t1.medium
     key_name: justin_cook
@@ -72,7 +70,7 @@
     nics:
       - port-name: dmzport22
     meta:
-      hostname: 'ukbeisns02.{{ role_fqdn }}'
+      hostname: 'ukblitens02.int.licensing.service.trade.gov.uk'
 
 - name: Create IPA servers
   os_server:
@@ -108,8 +106,6 @@
       hostname: "{{ item.name }}"
   with_items:
     - { name: 'ukbeisaom01.{{ role_fqdn }}', count: 1 }
-    - { name: 'ukbeisaom02.{{ role_fqdn }}', count: 2 }
-    - { name: 'ukbeisaom03.{{ role_fqdn }}', count: 3 }
 
 - name: Create app OpenShift node instances
   os_server:
@@ -120,28 +116,27 @@
     timeout: 200
     auto_ip: no
     nics:
-      - port-name: appport5{{ item.count }}
+      - port-name: appport2{{ item.count }}
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbeisaon01.{{ role_fqdn }}', count: 1 }
-    - { name: 'ukbeisaon02.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeisaon01.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeisaon02.{{ role_fqdn }}', count: 3 }
 
-- name: Create app haproxy instances
-  os_server:
-    name: "{{ item.name }}"
-    image: rhel7
-    flavor: m1.small
-    key_name: justin_cook
-    timeout: 200
-    auto_ip: no
-    nics:
-      - port-name: appport0{{ item.count }}
-    meta:
-      hostname: "{{ item.name }}"
-  with_items:
-    - { name: 'ukbeisalb01.{{ role_fqdn }}', count: 5 }
-    - { name: 'ukbeisalb02.{{ role_fqdn }}', count: 6 }
+#- name: Create app haproxy instances
+#  os_server:
+#    name: "{{ item.name }}"
+#    image: rhel7
+#    flavor: m1.small
+#    key_name: justin_cook
+#    timeout: 200
+#    auto_ip: no
+#    nics:
+#      - port-name: appport0{{ item.count }}
+#    meta:
+#      hostname: "{{ item.name }}"
+#  with_items:
+#    - { name: 'ukbeisalb01.{{ role_fqdn }}', count: 5 }
 
 - name: Create svc OpenShift master instances
   os_server:
@@ -157,8 +152,6 @@
       hostname: "{{ item.name }}"
   with_items:
     - { name: 'ukbeissom01.{{ role_fqdn }}', count: 1 }
-    - { name: 'ukbeissom02.{{ role_fqdn }}', count: 2 }
-    - { name: 'ukbeissom03.{{ role_fqdn }}', count: 3 }
 
 - name: Create svc OpenShift node instances
   os_server:
@@ -169,25 +162,24 @@
     timeout: 200
     auto_ip: no
     nics:
-      - port-name: svcport5{{ item.count }}
+      - port-name: svcport2{{ item.count }}
     meta:
       hostname: "{{ item.name }}"
   with_items:
-    - { name: 'ukbeisson01.{{ role_fqdn }}', count: 1 }
-    - { name: 'ukbeisson02.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeisson01.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeisson02.{{ role_fqdn }}', count: 3 }
 
-- name: Create svc haproxy instances
-  os_server:
-    name: "{{ item.name }}"
-    image: rhel7
-    flavor: m1.small
-    key_name: justin_cook
-    timeout: 200
-    auto_ip: no
-    nics:
-      - port-name: svcport0{{ item.count }}
-    meta:
-      hostname: "{{ item.name }}"
-  with_items:
-    - { name: 'ukbeisslb01.{{ role_fqdn }}', count: 5 }
-    - { name: 'ukbeisslb02.{{ role_fqdn }}', count: 6 }
+#- name: Create svc haproxy instances
+#  os_server:
+#    name: "{{ item.name }}"
+#    image: rhel7
+#    flavor: m1.small
+#    key_name: justin_cook
+#    timeout: 200
+#    auto_ip: no
+#    nics:
+#      - port-name: svcport0{{ item.count }}
+#    meta:
+#      hostname: "{{ item.name }}"
+#  with_items:
+#    - { name: 'ukbeisslb01.{{ role_fqdn }}', count: 5 }
