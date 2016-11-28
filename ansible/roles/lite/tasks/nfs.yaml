@@ -1,0 +1,91 @@
+---
+# Copyright (c) 2016, Department for Business, Energy & Industrial Strategy
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#- name: Review OpenStack volumes
+#  local_action: command openstack volume list --format=value
+#  register: openstack_cinder_volumes
+#  become: no
+
+#- debug: var=openstack_cinder_volumes
+
+- name: Format each device
+  filesystem:
+    dev={{ item.device }}
+    fstype={{ item.format }}
+  with_items: "{{ clusters[inventory_hostname].records }}"
+  ignore_errors: yes
+
+- name: Create mount points
+  file: path=/var/export{{ item.name }} state=directory
+        owner=root group=root mode=0700
+  with_items: "{{ clusters[inventory_hostname].records }}"
+
+- name: Set NFS configuration
+  lineinfile: dest=/etc/exports regexp='{{ item.name }}' 
+              line='/var/export/{{ item.name }}\t{{ item.export }}'
+  with_items: "{{ clusters[inventory_hostname].records }}"
+
+- name: Configure fstab
+  mount: 
+    name: "/var/export/{{ item.name }}"
+    src: "{{ item.device }}"
+    fstype: "{{ item.format }}"
+    state: present
+  with_items: "{{ clusters[inventory_hostname].records }}"
+
+- name: Set volume ownership and permissions
+  file: path=/var/export/{{ item.name }} state=directory
+        owner=nfsnobody group=nfsnobody mode=0700
+  with_items: "{{ clusters[inventory_hostname].records }}"
+
+- name: Configure iptables
+  blockinfile:
+    dest: /etc/sysconfig/iptables
+    insertafter: '-A KUBE-SERVICES'
+    block: |
+      # BEGIN NFS server
+      -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 53248 -j ACCEPT
+      -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 50825 -j ACCEPT
+      -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 20048 -j ACCEPT
+      -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 2049 -j ACCEPT
+      -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 111 -j ACCEPT
+      # END NFS server
+
+- name: Configure NFS
+  lineinfile: dest=/etc/sysconfig/nfs regexp='^{{ item.name }}=".*"'
+              line='{{ item.name }}="{{ item.value }}"'
+  with_items:
+    - { name: 'RPCMOUNTDOPTS', value: '-p 20048' }
+    - { name: 'STATDARG', value: '-p 50825' }
+
+- name: Configure SELinux to allow containers NFS
+  command: setsebool -P virt_use_nfs=true
+
+- name: Enable NFS
+  systemd: name={{ item }} enabled=yes
+  with_items:
+    - "rpcbind"
+    - "nfs-server"

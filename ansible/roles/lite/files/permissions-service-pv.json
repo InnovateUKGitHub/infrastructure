@@ -1,0 +1,20 @@
+{
+  "apiVersion": "v1",
+  "kind": "PersistentVolume",
+  "metadata": {
+    "name": "permissions-service",
+    "labels": {
+      "name": "permissions-service"
+    }
+  },
+  "spec": {
+    "capacity": {
+      "storage": "1Gi"
+    },
+    "accessModes": [ "ReadWriteMany" ],
+    "nfs": {
+      "path": "/var/export/permissions-service",
+      "server": "ukbeissom01"
+    }
+  }
+}

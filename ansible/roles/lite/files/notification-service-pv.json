@@ -1,0 +1,20 @@
+{
+  "apiVersion": "v1",
+  "kind": "PersistentVolume",
+  "metadata": {
+    "name": "notification-service",
+    "labels": {
+      "name": "notification-service"
+    }
+  },
+  "spec": {
+    "capacity": {
+      "storage": "1Gi"
+    },
+    "accessModes": [ "ReadWriteMany" ],
+    "nfs": {
+      "path": "/var/export/notification-service",
+      "server": "ukbeissom01"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "apiVersion": "v1",
+  "kind": "PersistentVolume",
+  "metadata": {
+    "name": "control-code-service",
+    "labels": {
+      "name": "control-code-service"
+    }
+  },
+  "spec": {
+    "capacity": {
+      "storage": "1Gi"
+    },
+    "accessModes": [ "ReadWriteMany" ],
+    "nfs": {
+      "path": "/var/export/controlcode-service",
+      "server": "ukbeissom01"
+    }
+  }
+}
