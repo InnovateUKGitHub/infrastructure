@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- hosts: lite-ns
+- hosts: beis-ns
   vars:
     domains:
       - name: licensing-dev.service.trade.gov.uk
@@ -33,27 +33,27 @@
         ns2: ns2.licensing-dev.service.trade.gov.uk
         ns2ip: 51.179.219.39
         records:
-          - name: ukbliteep01
+          - name: ukbeisep01
             type: A
             content: 51.179.219.74
-          - name: ukbliteext01
+          - name: ukbeisext01
             type: A
             content: 51.179.219.66
-          - name: ukbliteaom01
+          - name: ukbeisaom01
             type: A
             content: 51.179.219.6
           - name: permissions-finder
             type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+            content: ukbeisaom01.licensing-dev.service.trade.gov.uk.
           - name: ogel-registration
             type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+            content: ukbeisaom01.licensing-dev.service.trade.gov.uk.
           - name: search
             type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+            content: ukbeisaom01.licensing-dev.service.trade.gov.uk.
           - name: lite-prototype
             type: CNAME
-            content: ukbliteaom01.licensing-dev.service.trade.gov.uk.
+            content: ukbeisaom01.licensing-dev.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes

@@ -92,6 +92,37 @@
     - { name: 'ukbeisipa01.{{ role_fqdn }}', count: 1 }
     - { name: 'ukbeisipa02.{{ role_fqdn }}', count: 2 }
 
+- name: Create mgmt OpenShift master instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: mgmtport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeismom01.{{ role_fqdn }}', count: 1 }
+
+- name: Create mgmt OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel7
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: mgmtport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+  with_items:
+    - { name: 'ukbeismon01.{{ role_fqdn }}', count: 2 }
+    - { name: 'ukbeismon02.{{ role_fqdn }}', count: 3 }
+
 - name: Create app OpenShift master instances
   os_server:
     name: "{{ item.name }}"

@@ -29,18 +29,17 @@ masters
 nodes
 
 [OSEv3:vars]
-#ansible_ssh_user=cloud-user
 ansible_become=true
 ansible_sudo=true
 deployment_type=openshift-enterprise
 containerized=true
-openshift_master_default_subdomain=mgmt.int.licensing.service.trade.gov.uk
+openshift_master_default_subdomain=mgmt.licensing.service.trade.gov.uk.test
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
-ukbeismom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukbeismom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeismom01.int.licensing.service.trade.gov.uk
+ukbeismom01.licensing.service.trade.gov.uk.test ansible_host=10.100.100.21 openshift_hostname=ukbeismom01.licensing.service.trade.gov.uk.test openshift_public_hostname=ukbeismom01.licensing.service.trade.gov.uk.test
 
 [nodes]
-ukbeismom01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.21 openshift_hostname=ukbeismom01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeismom01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukbeismon01.int.licensing.service.trade.gov.uk ansible_host=10.100.100.22 openshift_hostname=ukbeismon01.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeismon01.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ukbeismon02.int.licensing.service.trade.gov.uk ansible_host=10.100.100.23 openshift_hostname=ukbeismon02.int.licensing.service.trade.gov.uk openshift_public_hostname=ukbeismon02.int.licensing.service.trade.gov.uk openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+ukbeismom01.licensing.service.trade.gov.uk.test ansible_host=10.100.100.21 openshift_hostname=ukbeismom01.licensing.service.trade.gov.uk.test openshift_public_hostname=ukbeismom01.licensing.service.trade.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukbeismon01.licensing.service.trade.gov.uk.test ansible_host=10.100.100.22 openshift_hostname=ukbeismon01.licensing.service.trade.gov.uk.test openshift_public_hostname=ukbeismon01.licensing.service.trade.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ukbeismon02.licensing.service.trade.gov.uk.test ansible_host=10.100.100.23 openshift_hostname=ukbeismon02.licensing.service.trade.gov.uk.test openshift_public_hostname=ukbeismon02.licensing.service.trade.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
