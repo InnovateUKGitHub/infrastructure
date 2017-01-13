@@ -26,8 +26,8 @@
 
 # The naming and authentication/authorization servers 
 
-- nick: ukbliteipa01
-  name: ukbliteipa01.int.licensing.service.trade.gov.uk
+- nick: ukbeisipa01
+  name: ukbeisipa01.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
     - ipa
@@ -45,8 +45,8 @@
   natnet: "%global.natnet%"
   authorized_keys: "%global.authorized_keys%"
 
-- nick: ukbliteipa02
-  name: ukbliteipa02.int.licensing.service.trade.gov.uk
+- nick: ukbeisipa02
+  name: ukbeisipa02.licensing.service.trade.gov.uk.test
   box: "%project.box%"
   groups:
     - ipa
