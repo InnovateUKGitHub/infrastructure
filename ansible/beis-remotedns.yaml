@@ -48,6 +48,12 @@
           - name: permissions-finder
             type: CNAME
             content: ukbeisalb.licensing-uat.service.trade.gov.uk.
+          - name: beis-bot
+            type: CNAME
+            content: ukbeisalb.licensing-uat.service.trade.gov.uk.
+          - name: chatbot
+            type: CNAME
+            content: ukbeisalb.licensing-uat.service.trade.gov.uk.
   roles: 
     - powerdns
   become: yes
