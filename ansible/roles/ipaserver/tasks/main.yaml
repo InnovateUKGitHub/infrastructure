@@ -65,8 +65,8 @@
   tags:
     - dnsentries
 
-- include: replica.yaml
-  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
-  tags:
-    - replica
+#- include: replica.yaml
+#  when: "{{ hostvars[inventory_hostname]['iparole'] == 'replica' }}"
+#  tags:
+#    - replica
 
